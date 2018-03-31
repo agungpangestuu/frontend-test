@@ -15,7 +15,7 @@ export default class CardImageExample extends Component {
             <CardItem>
                
                     <ChildCard />
-               
+                    <ChildCard />
             </CardItem>
         </Card>
 
