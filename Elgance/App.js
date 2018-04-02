@@ -6,7 +6,7 @@ import { Container, Header, Content, Button, Icon, Text } from 'native-base';
 import store from './components/store'
 import MainPage from './components/MainPage'
 import SearchScreen from './components/SearchScreen'
-// import PickUpLocationScreen from './components/screens/PickUpLocationScreen'
+import DetailScreen from './components/ImagePicker'
 // import CameraScreen from './components/OpenCamera'
 const Apps = StackNavigator({
   Home: {
@@ -18,6 +18,13 @@ const Apps = StackNavigator({
   SearchScreen: {
     screen: SearchScreen,
     navigationOptions: {
+      header: null
+    }
+  },
+  DetailScreen: {
+    screen: DetailScreen,
+    navigationOptions: {
+      headerTitle: 'Episode Detail',
       header: null
     }
   }

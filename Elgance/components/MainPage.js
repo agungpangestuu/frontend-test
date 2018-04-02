@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { View, Dimensions } from "react-native";
+import { View, Dimensions, NativeModules, processColor } from "react-native";
 import {
   Container,
   Title,
@@ -13,22 +13,33 @@ import {
   Button,
   Icon,
   Text,
-  Tab,
-  Tabs
+  Drawer
 } from "native-base";
-import { NativeModules, processColor } from "react-native";
+
+import Tabs from "./TabScreen";
+import SideBar from './SideBar';
 
 var { height, width } = Dimensions.get("window");
-
-import CardBox from "./common/Card";
 const { StatusBarManager } = NativeModules;
+
 export default class FooterTabsIconTextExample extends Component {
   componentDidMount() {
     StatusBarManager.setColor(processColor("#ff0000"), false);
   }
+  closeDrawer() {
+    this._drawer._root.close()
+  };
+  openDrawer() {
+    this._drawer._root.open()
+  };
   render() {
     const { navigate } = this.props.navigation;
     return (
+      <Drawer
+        ref={(ref) => { this._drawer = ref; }}
+        content={<SideBar navigator={ navigate } closeDrawer={this.closeDrawer} />}
+        onClose={() => this.closeDrawer()} >
+
       <Container>
         <Header
           hasTabs
@@ -36,7 +47,7 @@ export default class FooterTabsIconTextExample extends Component {
           style={{ backgroundColor: "#D28496" }}
         >
           <Left style={{ flex: 1 }}>
-            <Button transparent>
+            <Button transparent onPress={() => this.openDrawer()}>
               <Icon name="menu" />
             </Button>
           </Left>
@@ -56,68 +67,19 @@ export default class FooterTabsIconTextExample extends Component {
               <Icon
                 name="ios-arrow-down-outline"
                 style={{ fontSize: 30, color: "white" }}
+                onPress={() => navigate({routeName:"DetailScreen", key: 'screenDetail1'})}
               />
             </Button>
           </Body>
           <Right style={{ flex: 1 }}>
-            <Button transparent onPress={() => navigate("SearchScreen")}>
+            <Button transparent onPress={() => navigate({routeName: "SearchScreen", key: 'screenSearch1'})}>
               <Icon name="search" />
             </Button>
           </Right>
         </Header>
-        <Tabs
-          initialPage={0}
-          tabContainerStyle={{ elevation: 0 }}
-        >
-          <Tab
-            heading="HAIR"
-            style={{ backgroundColor: "#E7B3BF" }}
-            tabStyle={{ backgroundColor: "#E7B3BF"}}
-            activeTabStyle={{ backgroundColor: "#E7B3BF", fontFamily: "niagara" }}
-            activeTextStyle={{fontFamily: "niagara", fontWeight: 'normal' }}
-            textStyle={{ color: "white", fontFamily: "niagara" }}
-          >
-          
-            <CardBox />
-          </Tab>
-          <Tab
-            heading="EYELEICHES"
-            tabStyle={{ backgroundColor: "#E7B3BF" }}
-            activeTabStyle={{ backgroundColor: "#E7B3BF" }}
-            activeTextStyle={{fontWeight: 'normal',fontFamily: "niagara" }}
-            textStyle={{ color: "white", fontFamily: "niagara" }}
-          >
-            <CardBox />
-          </Tab>
-          <Tab
-            heading="BRIDAL"
-            tabStyle={{ backgroundColor: "#E7B3BF" }}
-            activeTabStyle={{ backgroundColor: "#E7B3BF" }}
-            activeTextStyle={{fontWeight: 'normal',fontFamily: "niagara" }}
-            textStyle={{ color: "white", fontFamily: "niagara"}}
-          >
-            <Text style={{ fontFamily: "niagara" }}>Apps</Text>
-          </Tab>
-          <Tab
-            heading="NAIL"
-            tabStyle={{ backgroundColor: "#E7B3BF" }}
-            activeTabStyle={{ backgroundColor: "#E7B3BF" }}
-            activeTextStyle={{fontWeight: 'normal',fontFamily: "niagara" }}
-            textStyle={{ color: "white", fontFamily: "niagara" }}
-          >
-            <Text>Apps</Text>
-          </Tab>
-          <Tab
-            heading="TAB2"
-            tabStyle={{ backgroundColor: "#E7B3BF" }}
-            activeTabStyle={{ backgroundColor: "#E7B3BF" }}
-            activeTextStyle={{fontWeight: 'normal',fontFamily: "niagara" }}
-            textStyle={{ color: "white", fontFamily: "niagara" }}
-          >
-            <Text>Apps</Text>
-          </Tab>
-        </Tabs>
+        <Tabs />
       </Container>
+      </Drawer>
     );
   }
 }

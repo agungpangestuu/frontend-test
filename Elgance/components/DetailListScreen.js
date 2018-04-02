@@ -1,73 +1,193 @@
-import React, { Component } from 'react';
-import { View, Dimensions, StyleSheet, Text } from 'react-native'
-import { Container, Header, Item, Input, Icon, Body, Right, Left, Button, Title } from 'native-base';
+import React, {Component} from 'react';
+import {connect} from 'react-redux'
+import {ActivityIndicator, TouchableOpacity, ImageBackground, StatusBar, StyleSheet, Text, View,} from 'react-native';
+import Call from 'react-native-phone-call'
+import {Button, Container, Content, H3, Badge, Icon} from 'native-base'
 
-var { height, width } = Dimensions.get("window");
+import Collapsible from 'react-native-collapsible-header';
+// import {fetch_one_episode} from '../stores/episodeAction'
 
-export default class SearchBarExample extends Component {
-  constructor(){
-    super()
+class EpisodeDetailScreen extends Component {
+  componentDidMount() {
+    // let {params} = this.props.navigation.state
+    // this.props.fetchOne(params.id)
   }
+  callNumber(id) {
+    let arg = {
+      number: '081282713295',
+      prompt: false
+    }
+    switch (id) {
+      case 1:Call(arg).catch(console.error)
+        
+        break;
+    }
+    
+  }
+
   render() {
+    const ep = {
+      Poster: 'https://i.ytimg.com/vi/aYkSqv6GziI/maxresdefault.jpg',
+      Ratings: '8.0',
+      Title: 'testing image',
+      Plot: 'asa ajsaj aksnaknsa nakdnka asjjanjdaj jasjnsjad asdnjasnas djajsdasd ajdbajsbdja dajbnjdbajd asdjbnajdas sjabjdasbjdbaj dajda sda asajba dasbdas dasbdas dbasunwjhebibrw asbauo beq eq ubasa bqobq badas ',
+      Released: '2017'
+    }
+    const dataButton = [
+      {
+        id : 1,
+        icon : 'ios-call',
+        text : 'Call'
+      },
+      {
+        icon : 'ios-star',
+        text : 'Add Review'
+      },
+      {
+        icon : 'ios-bookmark',
+        text : 'Bookmark'
+      },
+      {
+        icon : 'ios-camera',
+        text : 'Add Photo'
+      },
+      {
+        icon : 'ios-woman',
+        text : 'Been Here'
+      },
+    ]
     return (
-      <Container>
-        <Header
-          androidStatusBarColor="#D28496"
-          style={{ backgroundColor: "#D28496" }}
-        >
-          <Left>
-            <Button transparent onPress={() => this.props.navigation.goBack()}>
-              <Icon name="ios-close" style={{ fontSize: 30, color: "white" }} />
-            </Button>
-          </Left>
-          <Body
-            style={{
-              justifyContent: "center"
-            }}
-          >
-            <Title style={{ fontFamily: "niagara" }}>Cilegon</Title>
-            
-          </Body>
-          
-        </Header>
-        <View>
+      ep ?
+        (
+          <Container>
+            <Collapsible
+              min={100}
+              max={150}
+              backgroundColor="#000000"
+              renderHeader={(
+                <ImageBackground style={styles.headerImage} source={{uri: ep.Poster}} resizeMode={'cover'}>
+                  <StatusBar barStyle="light-content" backgroundColor="black"/>
+                  <Button style={styles.goBack} transparent onPress={() => this.props.navigation.goBack()}>
+                    <Icon style={styles.iconGoBack} name="ios-arrow-round-back"/>
+                  </Button>
+                  <Text style={{color: 'white',}}>Rating <Text
+                    style={{fontSize: 60}}>{ep.Ratings}</Text></Text>
+                </ImageBackground>
+              )}
+              renderContent={
+                <Content style={{margin: 20, flex: 1}}>
+                  <Text style={{fontSize: 30,alignSelf: 'center', fontFamily: 'niagara', color: 'black'}}>{ep.Title.toUpperCase()}</Text>
+                  <Text style={{fontSize: 20,alignSelf: 'center', fontFamily: 'niagara', color: 'black'}}>serpong utara tanggerang</Text>
+                  <View style={styles.displayFlex}>
+                    <Text>───────── </Text>
+                    <Badge style={{ backgroundColor: '#D28496', alignItems: 'center', justifyContent: 'center' }}>
+                      <Text style={{ color: 'white',alignSelf: 'center' }}>3.0</Text>
+                    </Badge>
+                    <Text> ─────────</Text>
+                  </View>
+                  <View style={styles.displayFlex}>
+                    {dataButton.map(item => {
+                      return (
+                        <View style={{flex: 1, flexDirection: 'column', alignContent: 'center', alignItems: 'center', justifyContent: 'space-around'}}>
+                          <TouchableOpacity onPress={() => this.callNumber(item.id)} style={{flex: 1, flexDirection: 'column', alignContent: 'center', alignItems: 'center', justifyContent: 'space-around'}}>
+                            <Icon style={{ color: '#D28496' }} name={item.icon} />
+                            <Text style={item.text.length > 8 ? {marginLeft :10, textAlign: 'center',marginRight: 10, color: '#D28496'}: {alignItems: 'center', color: '#D28496'}}>{item.text}</Text>
+                          </TouchableOpacity>
+                        </View>
+                      )
+                    })}
+                  </View>
+                  <View style={{ borderBottomWidth: 1.5, borderBottomColor: '#D28496', marginBottom: 20, marginTop: 20 }}/>
+                  <H3>PLOT</H3>
+                  <Text>{ep.Plot}</Text>
+                  <View style={styles.line}/>
+                  <H3>INFO</H3>
+                  <Text>Call</Text>
+                  <Text>080320830823</Text>
+                  <Text>Addres</Text>
+                  <Text>Serpong Utara Tanggerang</Text>
+                  
+                  <View style={styles.line}/>
+                  
+                </Content>
+              }
+            />
+          </Container>
+        ) : (
           <View style={styles.container}>
-            <Text style={[styles.title, this.props.isActive && styles.activeTitle]}>kasknss</Text>
+            <ActivityIndicator style={{marginTop:50}}/>
           </View>
-        </View>
-        <View>
-          <View style={styles.location}>
-            <Text>{height}</Text>
-          </View>
-        </View>
-      </Container>
-    );
+        )
+    )
   }
 }
 
 const styles = StyleSheet.create({
+  line: {
+    borderBottomWidth: 1,
+    borderBottomColor: '#d1dadf',
+    marginBottom: 20,
+    marginTop: 20
+  },
+  goBack: {
+    marginTop: 20
+  },
   container: {
-    borderWidth: 2,
-    borderColor: '#000',
-    marginLeft: 20,
-    marginRight: 20,
-    marginTop: 20,
-    alignItems: 'center'
+    flex: 1,
+    backgroundColor: '#F5FCFF',
   },
-  title: {
-    fontSize: 19,
-    fontWeight: 'bold',
+  iconGoBack: {
+    color: 'white',
+    fontSize: 40,
+    textShadowColor: 'rgba(0, 0, 0, 0.75)',
+    textShadowOffset: {width: -1, height: 1},
+    textShadowRadius: 10
   },
-  activeTitle: {
-    color: 'red',
+  header: {
+    height: 200,
+    padding: 0,
+    marginBottom: 5
   },
-  location: {
-    borderWidth: 2,
-    borderColor: '#000',
-    marginLeft: 20,
-    marginRight: 20,
-    marginTop: 20,
+  headerImage: {
+    height: 80,
+    flex: 1,
+    alignItems: 'flex-end',
+    justifyContent: 'space-between'
+  },
+  mainTitle: {
+    color: 'white',
+    fontSize: 45,
+    textShadowColor: 'rgba(0, 0, 0, 0.75)',
+    textShadowOffset: {width: -1, height: 1},
+    textShadowRadius: 10
+  },
+  headWrapper: {
+
+    backgroundColor: 'yellow',
+    flexDirection: 'row',
     alignItems: 'center',
-    width: width/3
+  },
+  subTitle: {
+    color: 'white',
+    fontSize: 30,
+    fontWeight: 'bold'
+  },
+  displayFlex: {
+    flex: 1,
+    flexDirection: 'row',
+    alignContent: 'center',
+    alignItems: 'center',
+    justifyContent: 'center'
   }
 });
+
+const mapStateToProps = (state) => ({
+  // episode: state.episodeReducer.episode
+})
+
+const mapDispatchToProps = (dispatch) => ({
+  // fetchOne: (id) => dispatch(fetch_one_episode(id))
+})
+
+
+export default connect(mapStateToProps, mapDispatchToProps)(EpisodeDetailScreen)

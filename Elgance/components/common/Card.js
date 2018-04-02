@@ -7,10 +7,10 @@ export default class CardImageExample extends Component {
   render() {
     return (
       <Container>
-   
+      <Content>
         <Card style={{marginBottom: 30, marginTop: 30 ,marginRight: 20, marginLeft: 20}}>
-            <CardItem header style={{alignContent: 'center',}}>
-                <Text>NativeBase</Text>
+            <CardItem style={{justifyContent: 'center'}}>
+                <Text style={{textAlign: 'center', fontFamily: 'niagara', fontSize: 30}}>NativeBase</Text>
             </CardItem>
             <CardItem>
                
@@ -18,7 +18,7 @@ export default class CardImageExample extends Component {
                     <ChildCard />
             </CardItem>
         </Card>
-
+        </Content>
       </Container>
     );
   }
