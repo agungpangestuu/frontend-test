@@ -1,18 +1,21 @@
-export const CurrentAction = data => ({
-    type: "CURRENT_ACTION",
-    payload: {
-      data
-    }
-  });
+export const LoginAction = data => ({
+  type: "LOGIN_ACTION",
+  payload: {
+    data
+  }
+});
 
-export const CashAction = () => ({
-  type: "CASH_ACTION"
+export const SignupAction = (data) => ({
+type: "SIGNUP_ACTION",
+payload: {
+  data
+}
 });
 
 export const BilledAction = () => ({
-  type: "Billed_ACTION"
+type: "Billed_ACTION"
 });
 
 export const WalletAction = () => ({
-  type: "Wallet_ACTION"
+type: "Wallet_ACTION"
 });
