@@ -30,7 +30,7 @@ export class componentName extends Component {
               <Text style={{textAlign: 'center', color: 'green'}}>SIGN UP</Text>
             </Button>
            
-            <Button rounded onPress={() => navigate("LoginScreen")} style={{alignSelf: 'center', width: 250,marginBottom: 30, justifyContent: 'center', alignContent: 'center'}}>
+            <Button rounded onPress={() => navigate({routeName: "LoginScreen", key: 'LoginScren1'})} style={{alignSelf: 'center', width: 250,marginBottom: 30, justifyContent: 'center', alignContent: 'center'}}>
               <Text style={{color: 'white'}}>SIGN IN</Text>
           </Button>
           </View>

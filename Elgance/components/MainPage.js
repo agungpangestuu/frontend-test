@@ -1,4 +1,5 @@
 import React, { Component } from "react";
+import { connect } from "react-redux"
 import { View, Dimensions, NativeModules, processColor } from "react-native";
 import {
   Container,
@@ -22,7 +23,7 @@ import SideBar from './SideBar';
 var { height, width } = Dimensions.get("window");
 const { StatusBarManager } = NativeModules;
 
-export default class FooterTabsIconTextExample extends Component {
+class MainPage extends Component {
   componentDidMount() {
     StatusBarManager.setColor(processColor("#ff0000"), false);
   }
@@ -62,7 +63,7 @@ export default class FooterTabsIconTextExample extends Component {
             <Button transparent>
               <Icon name="ios-pin" style={{ fontSize: 30, color: "white" }} />
             </Button>
-            <Title style={{ fontFamily: "niagara" }}>Cilegon</Title>
+            <Title style={{ fontFamily: "niagara" }}>{this.props.getDirect ? this.props.getDirect : 'Select Location'}</Title>
             <Button transparent>
               <Icon
                 name="ios-arrow-down-outline"
@@ -83,3 +84,13 @@ export default class FooterTabsIconTextExample extends Component {
     );
   }
 }
+
+const mapStateToProps = (state) => ({
+  getDirect: state.mainPage.directLocation
+})
+
+const mapDispatchToProps = {
+  
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(MainPage)

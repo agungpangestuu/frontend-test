@@ -7,19 +7,19 @@ const initialState = {
   },
   login: {
     username: '',
-    password: ''
+    alreadySign: '',
+    token: ''
   },
-  signUp: {
-    fullname: '',
-    username: '',
-    password: ''
+  signUp: false,
+  mainPage: {
+    directLocation: null,
   }
 };
 
 export const reducer = (state = initialState, action) => {
   switch (action.type) {
-    case "CURRENT_ACTIONS":
-      return { ...state, base: action.payload.data };
+    case "SIGNUP_ACTION":
+      return { ...state, signUp: {success: true }};
     case "CASH_ACTIONS":
       return {
         ...state,

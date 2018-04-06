@@ -32,7 +32,7 @@ const Apps = StackNavigator({
   },
   MainPage: {
     screen: MainPage,
-    navigationOption : {
+    navigationOptions : {
       header: null 
     }
   },
