@@ -18,17 +18,10 @@ export class componentName extends Component {
       const { navigate } = this.props.navigation
     return (
         <View  style={styles.backgroundImage}>
-        <ImageBackground
-          style={styles.backgroundImage}
-          source={{
-            uri:
-              'https://orig00.deviantart.net/3ea6/f/2013/204/7/5/anime_render_38_by_animerenderss-d6es9ok.png',
-          }}
-          resizeMode={'cover'}
-        >
+       
           <View
             style={{
-              backgroundColor: 'rgba(104, 232, 106, 0.69)',
+              backgroundColor: 'white',
               flex: 1,
               alignContent: 'center',
               alignItems: 'center',
@@ -44,7 +37,6 @@ export class componentName extends Component {
               <Text style={{color: 'white'}}>SIGN IN</Text>
           </Button>
           </View>
-        </ImageBackground>
         </View>
       );
     }

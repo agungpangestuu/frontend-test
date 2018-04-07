@@ -40,17 +40,10 @@ class SignUp extends Component {
     render() {
         return (
             <View style={styles.backgroundImage}>
-                <ImageBackground
-                    style={styles.backgroundImage}
-                    source={{
-                        uri:
-                            'https://orig00.deviantart.net/3ea6/f/2013/204/7/5/anime_render_38_by_animerenderss-d6es9ok.png',
-                    }}
-                    resizeMode={'cover'}
-                >
+                
                     <View
                         style={{
-                            backgroundColor: 'rgba(104, 232, 106, 0.69)',
+                            backgroundColor: 'white',
                             flex: 1,
                             alignContent: 'center',
                             alignItems: 'center',
@@ -58,7 +51,7 @@ class SignUp extends Component {
                         }}
                     >
                         <Text style={{ fontWeight: 'bold', fontSize: 50, marginBottom: 30 }}>Sign Up</Text>
-                        <Item style={{ marginLeft: 35, marginRight: 35, marginBottom: 20, borderBottomColor: 'white', borderBottomWidth: 2 }}>
+                        <Item style={{ marginLeft: 35, marginRight: 35, marginBottom: 20, borderBottomColor: 'black', borderBottomWidth: 2 }}>
                             <Icon active name="ios-contact" />
                             <Input placeholder="Fullname"
                                 ref="fullname"
@@ -69,7 +62,7 @@ class SignUp extends Component {
                                 value={this.state.fullname}
                             />
                         </Item>
-                        <Item style={{ marginLeft: 35, marginRight: 35, marginBottom: 20, borderBottomColor: 'white', borderBottomWidth: 2 }}>
+                        <Item style={{ marginLeft: 35, marginRight: 35, marginBottom: 20, borderBottomColor: 'black', borderBottomWidth: 2 }}>
                             <Icon active name="ios-contact" />
                             <Input placeholder="Username"
                                 ref="username"
@@ -82,9 +75,9 @@ class SignUp extends Component {
                             />
                         </Item>
 
-                        <Item style={{ marginLeft: 35, marginRight: 35, marginBottom: 60, borderBottomColor: 'white', borderBottomWidth: 2 }}>
+                        <Item style={{ marginLeft: 35, marginRight: 35, marginBottom: 60, borderBottomColor: 'black', borderBottomWidth: 2 }}>
                             <Icon active name="ios-lock" />
-                            <Input placeholder="Password"
+                            <Input placeholder="Password" secureTextEntry={true}
                                 ref="password"
                                 onSubmitEditing={() => this._focusNextField('fullname')}
                                 returnKeyType={"next"}
@@ -99,7 +92,6 @@ class SignUp extends Component {
                         </Button>
 
                     </View>
-                </ImageBackground>
             </View>
         );
     }
