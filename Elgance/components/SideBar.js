@@ -7,15 +7,18 @@ import {
   StyleSheet,
   Text,
   View,
-  Dimensions
+  Dimensions,
+  AsyncStorage
 } from "react-native";
 import { Tabs, Tab, Content, List, ListItem } from "native-base";
 import Collapsible from "react-native-collapsible-header";
 
 export default class SideBar extends Component {
-  handleLoginButton() {
+  handleLogoutButton() {
     // this.props.closeDrawer()
-    this.props.navigator({ routeName: "SearchScreen", key: "Login1" })
+    AsyncStorage.removeItem('token').then(result => {
+      this.props.navigator({ routeName: "Home", key: "SignScreen1" })
+    }).catch(err => console.log(err))
   }
   render() {
     console.log(this.props);
@@ -30,7 +33,7 @@ export default class SideBar extends Component {
         />
         <List>
           <ListItem>
-            <Text style={{ fontWeight: "bold" }}>Beranda</Text>
+            <Text style={{ fontWeight: "bold" }}>Profile</Text>
           </ListItem>
           <ListItem>
             <TouchableOpacity
@@ -46,10 +49,10 @@ export default class SideBar extends Component {
           </ListItem>
           <ListItem
             onPress={() =>
-              this.handleLoginButton()
+              this.handleLogoutButton()
             }
           >
-            <Text>Sign Up</Text>
+            <Text>Logout</Text>
           </ListItem>
         </List>
       </Content>

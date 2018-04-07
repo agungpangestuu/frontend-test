@@ -8,7 +8,8 @@ const initialState = {
   login: {
     username: '',
     alreadySign: '',
-    token: ''
+    token: '',
+    fullname: ''
   },
   signUp: false,
   mainPage: {

@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { StyleSheet, ImageBackground, View, TouchableOpacity, Alert } from 'react-native';
+import { StyleSheet, AsyncStorage, ImageBackground, View, TouchableOpacity, Alert } from 'react-native';
 import { Container, Header, Left, Content, Item, Input, Icon, Button, Text } from 'native-base';
 
 import { login_user } from "./store/actions"
@@ -13,6 +13,7 @@ class Login extends Component {
             password: null
         }
     }
+    
     _focusNextField(nextField) {
         this.refs[nextField]._root.focus()
     }

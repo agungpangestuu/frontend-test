@@ -1,9 +1,19 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import {StyleSheet, ImageBackground, View, Alert} from 'react-native';
+import {StyleSheet, AsyncStorage, ImageBackground, View, Alert} from 'react-native';
 import {Container, Header, Content, Item, Input, Icon, Button, Text} from 'native-base'; 
 
 export class componentName extends Component {
+  componentDidMount() {
+    AsyncStorage.getItem('token').then(result => {
+      if(result){
+        const { navigate } = this.props.navigation
+        navigate({routeName: 'MainPage', key: 'MainPage1'})
+      } 
+    }).catch(err => {
+        console.log(err)
+    })
+}
   render() {
       const { navigate } = this.props.navigation
     return (
