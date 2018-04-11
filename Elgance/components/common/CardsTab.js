@@ -15,7 +15,7 @@ export default class CardImageExample extends Component {
             {this.props.data.map(item  => {
              
               return (
-                <Container>
+                <Container style={{flexWrap: 'wrap'}}>
                   <Content>
                     <Card>
                       <CardItem cardBody>

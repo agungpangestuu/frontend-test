@@ -11,7 +11,7 @@ export default class CardImageExample extends Component {
             <CardItem style={{justifyContent: 'center'}}>
                 <Text style={{textAlign: 'center', fontFamily: 'niagara', fontSize: 30}}>Go get your {this.props.tab} done ...</Text>
             </CardItem>
-            <CardItem>
+            <CardItem style={{flex: 1, flexDirection: 'row', marginLeft: 10, marginRight: 10, flexWrap: "wrap"}}>
                {this.props.children}
             </CardItem>
         </Card>
