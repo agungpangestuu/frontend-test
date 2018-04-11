@@ -9,7 +9,7 @@ import LoginScreen from './components/LoginScreen'
 import SignUpScreen from './components/SignUpScreen'
 import MainPage from './components/MainPage'
 import SearchScreen from './components/SearchScreen'
-import DetailScreen from './components/ImagePicker'
+import DetailScreen from './components/DetailListScreen'
 // import CameraScreen from './components/OpenCamera'
 const Apps = StackNavigator({
   Home: {

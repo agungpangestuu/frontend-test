@@ -1,11 +1,17 @@
 import React, { Component } from 'react';
-import { View, Dimensions, StyleSheet, Text } from 'react-native'
+import { connect } from 'react-redux';
+import { View, Dimensions, StyleSheet, Text, TouchableOpacity } from 'react-native'
 import { TabNavigator } from "react-navigation";
-import { Container,Content, Header, Item, Input, Icon, Body, Right, Left, Button, Title } from 'native-base';
+import { Container,Content, Header, Item, Input, Icon, Body, Right, Left, Button, Title, Spinner } from 'native-base';
+import axios from 'axios'
+
+import {data} from './locationInBanten'
+import SeacrhInput from './AutoCompleteSearch';
+import { getLocations, DirectLocation } from "./store/actions"
 
 var { height, width } = Dimensions.get("window");
 
-export default class SearchBarExample extends Component {
+class SearchBarExample extends Component {
   constructor(props){
     super(props)
     this.state = {
@@ -13,121 +19,108 @@ export default class SearchBarExample extends Component {
       latitude: null,
       longitude: null,
       error:null,
-      locationInBanten: [
-        {
-          id: 1,
-          distance: "7 km",
-          text: "Serpong Utara"
-        },
-        {
-          id: 2,
-          distance: "5 km",
-          text: "Cibodas"
-        },
-        {
-          id: 3,
-          distance: "10 km",
-          text: "Serpong"
-        },
-        {
-          id: 2,
-          distance: "5 km",
-          text: "Cibodas"
-        },
-        {
-          id: 3,
-          distance: "10 km",
-          text: "Serpong"
-        },
-        {
-          id: 2,
-          distance: "5 km",
-          text: "Cibodas"
-        },
-        {
-          id: 3,
-          distance: "10 km",
-          text: "Serpong"
-        },
-      ]
+      distance: null,
+      isLoading: true
     }
   }
   componentDidMount(){
+    console.log('did')
     navigator.geolocation.getCurrentPosition(
       (position) => {
-        console.log("wokeeey");
-        console.log(position);
+        let locat = data(position)
+        console.log(locat)
         this.setState({
           latitude: position.coords.latitude,
           longitude: position.coords.longitude,
           error: null,
+          distance: locat,
+          isLoading: false
         });
       },
       (error) => this.setState({ error: error.message }),
       { enableHighAccuracy: false, timeout: 200000, maximumAge: 1000 }
     );
+    
+  }
+
+  _handleOnpressLocation(location) {
+    this.props.postDirectLocation(location)
+    this.props.navigation.goBack()
   }
   
   render() {
-    return (
-      <Container>
-        <Header hasTabs
-          androidStatusBarColor="#D28496"
-          style={{ backgroundColor: "#D28496" }}
-        >
-          <Left>
-            <Button transparent onPress={() => this.props.navigation.goBack()}>
-              <Icon name="ios-close" style={{ fontSize: 30, color: "white" }} />
-            </Button>
-          </Left>
-          <Body
-            style={{
-              justifyContent: "center"
-            }}
+    {if (!this.state.isLoading) {
+      return (
+        <Container>
+          <Header hasTabs
+            androidStatusBarColor="#D28496"
+            style={{ backgroundColor: "#D28496" }}
           >
-            <Title style={{ marginLeft: 20,fontFamily: "niagara"}}>Select Location</Title>
+            <Left>
+              <Button transparent onPress={() => this.props.navigation.goBack()}>
+                <Icon name="ios-close" style={{ fontSize: 30, color: "white" }} />
+              </Button>
+            </Left>
+            <Body
+              style={{
+                justifyContent: "center"
+              }}
+            >
+              <Title style={{ marginLeft: 20,fontFamily: "niagara"}}>Select Location</Title>
+              
+            </Body>
             
-          </Body>
+          </Header>
+          <Content style={{backgroundColor: 'white'}}>
           
-        </Header>
-        <Content style={{backgroundColor: 'white'}}>
-        <View style={styles.containerSearch}>
-          <Item regular style={styles.inputSearch}>
-            <Input placeholder='Regular Textbox' placeholderTextColor='white' style={styles.textBox} />
-          </Item>
-        </View>
-        <View style={styles.container}>
-          <Icon name="ios-locate-outline" style={{ fontSize: 30, color: "red" }}/>
-          <Text style={styles.title}> Detect my location</Text>
-        </View>
-        <View style={{marginTop: 20}}>
-         <Text style={styles.headerLocation}>Location In Banten</Text>
-        </View>
-        <View style={{flex: 1, flexDirection: 'row', marginLeft: 10, marginRight: 10, flexWrap: "wrap"}}>
-       { this.state.locationInBanten.map(item => {
-         return ( <View style={styles.location}>
-            <Text>{item.text}</Text>
-            <Text>{item.distance}</Text>
+          <SeacrhInput/>
+  
+          <View style={styles.container}>
+            <Icon name="ios-locate-outline" style={{ fontSize: 30, color: "red" }}/>
+            <Text style={styles.title}> Detect my location</Text>
           </View>
-         )
-        })}
-          
-        </View>
-        <View style={{flex: 1, marginTop: 30}}>
-          <Text style={styles.headerLocation}>Recent Locations</Text>
-          <View style={{flex: 1,flexDirection: 'row',marginTop: 10 }}>
-            <Icon name="ios-pin" style={{alignSelf: 'center',marginLeft: 25, marginRight: 10, fontSize: 20}} />
-            <Text style={{fontSize: 17, alignSelf: 'center'}}>Cilegon</Text>
+          <View style={{marginTop: 20}}>
+           <Text style={styles.headerLocation}>Location In Banten</Text>
           </View>
-          <View style={{flex: 1, flexDirection: 'row', marginTop: 10 }}>
-            <Icon name="ios-pin" style={{alignSelf: 'center',marginLeft: 25, marginRight: 10, fontSize: 20}} />
-            <Text style={{fontSize: 17, alignSelf: 'center'}}>Serpong</Text>
+          <View style={{flex: 1, flexDirection: 'row', marginLeft: 10, marginRight: 10, flexWrap: "wrap"}}>
+         {this.state.distance.map(item => {
+           return ( 
+            <TouchableOpacity onPress={() => this._handleOnpressLocation(item.text)}>
+            <View style={styles.location}>
+              <Text>{item.text}</Text>
+              <Text>{item.locat}</Text>
+            </View>
+            </TouchableOpacity>
+           )
+          })}
+            
           </View>
-        </View>
-        </Content>
-
-      </Container>
-    );
+          <View style={{flex: 1, marginTop: 30}}>
+            <Text style={styles.headerLocation}>Recent Locations</Text>
+            <View style={{flex: 1,flexDirection: 'row',marginTop: 10 }}>
+              <Icon name="ios-pin" style={{alignSelf: 'center',marginLeft: 25, marginRight: 10, fontSize: 20}} />
+              <Text style={{fontSize: 17, alignSelf: 'center'}}>Cilegon</Text>
+            </View>
+            <View style={{flex: 1, flexDirection: 'row', marginTop: 10 }}>
+              <Icon name="ios-pin" style={{alignSelf: 'center',marginLeft: 25, marginRight: 10, fontSize: 20}} />
+              <Text style={{fontSize: 17, alignSelf: 'center'}}>Serpong</Text>
+            </View>
+          </View>
+          </Content>
+  
+        </Container>
+      );
+    } else {
+      return (
+        <Container style={{flex: 1,alignContent: 'center', justifyContent: 'center',}}>
+          <Content >
+            <Spinner color="blue" style={{alignSelf: 'center'}}/>
+          </Content>
+        </Container>
+      );
+    }
+    }
+    
   }
 }
 
@@ -153,7 +146,8 @@ const styles = StyleSheet.create({
   },
   containerSearch: {
     height: 50,
-    backgroundColor: '#D28496'
+    backgroundColor: '#D28496',
+    flex: 1
   },
   inputSearch: {
     height: 25,
@@ -181,3 +175,14 @@ const styles = StyleSheet.create({
     marginLeft: 5
   }
 });
+
+const mapStateToProps = (state) => ({
+  
+})
+
+const mapDispatchToProps = (dispatch) => ({
+  actionGetLocation: (origin, dest) => { dispatch(getLocations(origin, dest)) },
+  postDirectLocation: (data) => dispatch(DirectLocation(data))
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(SearchBarExample)

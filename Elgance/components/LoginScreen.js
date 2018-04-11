@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import { StyleSheet, AsyncStorage, ImageBackground, View, TouchableOpacity, Alert } from 'react-native';
 import { Container, Header, Left, Content, Item, Input, Icon, Button, Text } from 'native-base';
 
-import { login_user } from "./store/actions"
+import { login_user, getAllCategory } from "./store/actions"
 
 class Login extends Component {
     constructor() {
@@ -17,6 +17,13 @@ class Login extends Component {
     _focusNextField(nextField) {
         this.refs[nextField]._root.focus()
     }
+    componentDidMount() {
+        this.props.setAllCategory().then(result => {
+            console.log(result)
+          }).catch(err => {
+            console.log(err)
+          })
+    }
 
     handleSubmit(e) {
         e.preventDefault()
@@ -28,7 +35,12 @@ class Login extends Component {
         }
 
         this.props.postLogin_state(LoginEvent).then(result => {
-            navigate({routeName: 'MainPage', key: 'MainPage1'})
+            this.props.setAllCategory().then(result => {
+                navigate({routeName: 'MainPage', key: 'MainPage1'})
+              }).catch(err => {
+                console.log(err)
+              })
+           
         }).catch(err => {
             Alert.alert('Please Fill The Blank')
         })
@@ -124,7 +136,8 @@ const mapStateToProps = (state) => ({
   
   const mapDispatchToProps = (dispatch) => {
     return {
-        postLogin_state: obj => dispatch(login_user(obj))
+        postLogin_state: obj => dispatch(login_user(obj)),
+        setAllCategory: () => dispatch(getAllCategory())
     }
   };
   

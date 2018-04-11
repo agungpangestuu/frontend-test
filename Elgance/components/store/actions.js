@@ -12,6 +12,13 @@ export const SignupAction = () => ({
   type: "SIGNUP_ACTION"
 });
 
+export const DirectLocation = (data) => ({
+  type: "DIRECTLOCATION_ACTIONS",
+  payload: {
+    data
+  }
+});
+
 export const isLoading = data => ({
   type: "IS_LOADING",
   payload: {
@@ -19,8 +26,11 @@ export const isLoading = data => ({
   }
 });
 
-export const WalletAction = () => ({
-  type: "Wallet_ACTION"
+export const AllCategory = (data) => ({
+  type: "ALLCATEGORY_ACTION",
+  payload: {
+    data
+  }
 });
 
 export const login_user = obj => {
@@ -32,17 +42,19 @@ export const login_user = obj => {
           console.log("masuk");
           AsyncStorage.setItem("token", data.token)
             .then(result => {
-              let objLogin = {
-                token: data.token,
-                alreadyLogin: true,
-                username: obj.username
-              };
-
-              console.log(objLogin);
-              dispatch(LoginAction(objLogin));
-              resolve(true);
+              console.log('dateng token')
+              
             })
             .catch(err => {});
+            let objLogin = {
+              token: data.token,
+              alreadyLogin: true,
+              username: obj.username
+            };
+
+            console.log(objLogin);
+            dispatch(LoginAction(objLogin));
+            resolve(true);
         })
         .catch(err => {
           console.log(err);
@@ -69,3 +81,35 @@ export const signup_user = obj => {
     });
   };
 };
+
+export const getLocations = (origin, dest) => {
+  return (disoatch, getState) => {
+    return new Promise((resolve, reject) => {
+      axios.post(`https://maps.googleapis.com/maps/api/distancematrix/json?units=metric&origins=${origin.lat},${origin.long}&destinations=${destination.lat},${destinantion.long}&key=AIzaSyAjWOHPrXscmVtlGBYIsi6ZrvF8ZYydteI`)
+      .then( ({ data }) => {
+        resolve(data)
+      })
+      .catch(err => {
+        reject(err)
+      })
+    })
+  }
+}
+
+export const getAllCategory = () => {
+  return (dispatch, getState) => {
+    return new Promise((resolve, reject) => {
+      axios.get(`http://Hapi-aja.herokuapp.com/saloncategory`, {headers: {'Authorization': `Bearer ${getState().login.token}`}})
+      .then( ({ data }) => {
+        console.log('ini data all category',data)
+        // JSON.parse(data)
+        dispatch(AllCategory(data))
+        resolve(data)
+      })
+      .catch(err => {
+        console.log(err)
+        reject(err)
+      })
+    })
+  }
+}

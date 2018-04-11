@@ -1,5 +1,6 @@
 const initialState = {
-  base: "",
+  allCategory: null,
+  search: null,
   status: {
     cash: true,
     billed: false,
@@ -21,28 +22,22 @@ export const reducer = (state = initialState, action) => {
   switch (action.type) {
     case "SIGNUP_ACTION":
       return { ...state, signUp: {success: true }};
-    case "CASH_ACTIONS":
+    case "DIRECTLOCATION_ACTIONS":
       return {
         ...state,
-        status: {
-          cash: true,
-          billed: false,
-          wallet: false
+        mainPage: {
+          directLocation: action.payload.data
         }
       };
-    case "BILLED_ACTIONS":
+    case "LOGIN_ACTION":
       return {
         ...state,
-        status: {
-          cash: false,
-          billed: true,
-          wallet: false
-        }
+        login: action.payload.data
       };
-    case "WALLET_ACTIONS":
+    case "ALLCATEGORY_ACTION":
       return {
-        ...state.status,
-        cash: true
+        ...state,
+        allCategory: action.payload.data
       };
     default:
       return state;
