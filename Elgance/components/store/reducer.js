@@ -1,6 +1,7 @@
 const initialState = {
   allCategory: null,
   search: null,
+  detailList: null,
   status: {
     cash: true,
     billed: false,
@@ -38,6 +39,11 @@ export const reducer = (state = initialState, action) => {
       return {
         ...state,
         allCategory: action.payload.data
+      };
+    case "DETAILLIST_ACTION":
+      return {
+        ...state,
+        detailList: action.payload.data
       };
     default:
       return state;

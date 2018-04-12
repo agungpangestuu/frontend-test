@@ -2,13 +2,14 @@ import React, { Component } from "react";
 import PropTypes from "prop-types";
 import { View, Dimensions } from "react-native";
 import { Tabs, Tab, Text, Content, Spinner } from "native-base";
+import { connect } from "react-redux"
 
 import CardBox from "./common/CardsTab";
 var { height, width } = Dimensions.get("window");
 
-export default class TabScreen extends Component {
-  constructor(){
-    super()
+class TabScreen extends Component {
+  constructor(props){
+    super(props)
     this.state= {
       Hair: null,
       Eyelashes: null,
@@ -19,11 +20,11 @@ export default class TabScreen extends Component {
     }
   }
   componentDidMount(){
-    console.log('ini props',this.props.allCategory)
-    if(this.props.allCategory){
+    console.log('ini props',this.props)
+    if(this.props.getAllCategory){
       console.log('asuuuu')
       var count  = 0
-      this.props.allCategory.forEach((element, index) => {
+      this.props.getAllCategory.forEach((element, index) => {
         count= count + 1
         switch (element.category) {
           case 'Hair': this.setState({Hair: element.data})
@@ -37,7 +38,7 @@ export default class TabScreen extends Component {
            case 'Brow': this.setState({Brow: element.data})
            break;
         }
-        if(count == this.props.allCategory.lenght) {
+        if(count == this.props.getAllCategory.length) {
           this.setState({isLoading: false})
         }
       });
@@ -58,14 +59,14 @@ export default class TabScreen extends Component {
         <Tabs initialPage={0} tabContainerStyle={{ elevation: 0 }}>
           <Tab
             heading="HAIR"
-            style={{ backgroundColor: "#E7B3BF", flex: 1,}}
+            style={{ backgroundColor: "#E7B3BF", flex: 1}}
             tabStyle={{ backgroundColor: "#E7B3BF" }}
             activeTabStyle={{ backgroundColor: "#E7B3BF", fontFamily: "niagara" }}
             activeTextStyle={{ fontFamily: "niagara", fontWeight: "normal" }}
             textStyle={{ color: "white", fontFamily: "niagara" }}
           >
           <Content style={{flex: 1}}>
-            <CardBox tab="Hair" data={this.state.Hair? this.state.Hair : this.props.allCategory}/>
+            <CardBox tab="Hair" data={this.state.Hair? this.state.Hair : this.props.allCategory} navigation={this.props.navigation}/>
           </Content>
           </Tab>
           <Tab
@@ -77,7 +78,7 @@ export default class TabScreen extends Component {
             textStyle={{ color: "white", fontFamily: "niagara" }}
           >
           <Content style={{flex: 1}}>
-            <CardBox tab="Eyelashes" data={this.state.Eyelashes}/>
+            <CardBox tab="Eyelashes" data={this.state.Eyelashes} navigation={this.props.navigation}/>
           </Content>
             
           </Tab>
@@ -90,7 +91,7 @@ export default class TabScreen extends Component {
             textStyle={{ color: "white", fontFamily: "niagara" }}
           >
             <Content style={{flex: 1}}>
-              <CardBox tab="Bridal" data={this.state.Bridal}/>
+              <CardBox tab="Bridal" data={this.state.Bridal} navigation={this.props.navigation} />
             </Content>
           </Tab>
           <Tab
@@ -102,7 +103,7 @@ export default class TabScreen extends Component {
             textStyle={{ color: "white", fontFamily: "niagara" }}
           >
             <Content style={{flex: 1}}>
-              <CardBox tab="Nail"  data={this.state.Nails}/>
+              <CardBox tab="Nail"  data={this.state.Nails} navigation={this.props.navigation} />
             </Content>
           </Tab>
           <Tab
@@ -114,11 +115,11 @@ export default class TabScreen extends Component {
             textStyle={{ color: "white", fontFamily: "niagara" }}
           >
             <Content style={{flex: 1}}>
-              <CardBox tab="Brow"  data={this.state.Brow} />
+              <CardBox tab="Brow"  data={this.state.Brow} navigation={this.props.navigation}/>
             </Content>
           </Tab>
         </Tabs>
-      );
+      )
     } else {
       return (
         <Container style={{flex: 1,alignContent: 'center', justifyContent: 'center',}}>
@@ -126,10 +127,22 @@ export default class TabScreen extends Component {
             <Spinner color="blue" style={{alignSelf: 'center'}}/>
           </Content>
         </Container>
-      );
+      )
     }
   }
     
   }
 }
 
+const mapStateToProps = (state) => ({
+  getAllCategory: state.allCategory,
+  getSearch: state.search
+})
+
+const mapDispatchToProps = (dispatch) => {
+  return {
+    
+  }
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(TabScreen)

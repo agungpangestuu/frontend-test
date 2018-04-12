@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import {StyleSheet, AsyncStorage, ImageBackground, View, Alert} from 'react-native';
 import {Container, Header, Content, Item, Input, Icon, Button, Text, Spinner} from 'native-base'; 
 
-import { getAllCategory } from "./store/actions"
+import { getAllCategory, login_user } from "./store/actions"
 
 export class componentName extends Component {
   constructor(){
@@ -12,18 +12,30 @@ export class componentName extends Component {
       isLoading: true
     }
   }
-  componentWillMount() {
+  componentDidMount() {
     // this.props.setAllCategory().then(result => {
-      AsyncStorage.getItem('token').then(result => {
+      AsyncStorage.getItem('credential').then(result => {
+        console.log(result)
+        Alert.alert(result)
         if(result){
           const { navigate } = this.props.navigation
-          navigate({routeName: 'MainPage', key: 'MainPage1'})
+          const credential = JSON.parse(result)
+          let obj = {
+            username: credential.username,
+            password: credential.password
+          }
+          Alert.alert(credential)
+          this.props.postLogin_state(obj).then(resultLogin => {
+            navigate({routeName: 'MainPage', key: 'MainPage1'})
+          }).catch(err => this.setState({isLoading: false}))
+          
   
         } else {
           this.setState({isLoading: false})
         }
       }).catch(err => {
           console.log(err)
+          Alert.alert(err)
           this.setState({isLoading: false})
       })
       this.setState({isLoading: false})
@@ -34,7 +46,7 @@ export class componentName extends Component {
 }
   render() {
       const { navigate } = this.props.navigation
-
+      console.log(this.state.isLoading)
       { if (!this.state.isLoading) {
         return (
           <View  style={styles.backgroundImage}>
@@ -102,8 +114,8 @@ const mapStateToProps = (state) => ({
 })
 
 const mapDispatchToProps = (dispatch) => ({
-  
-    setAllCategory: () => dispatch(getAllCategory())
+  postLogin_state: obj => dispatch(login_user(obj)),
+  setAllCategory: () => dispatch(getAllCategory())
   
 });
 

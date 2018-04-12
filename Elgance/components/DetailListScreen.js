@@ -3,11 +3,11 @@ import {connect} from 'react-redux'
 import {ActivityIndicator, TouchableOpacity, ImageBackground, StatusBar, StyleSheet, Text, View,} from 'react-native';
 import Call from 'react-native-phone-call'
 import {Button, Container, Content, H3, Badge, Icon} from 'native-base'
-
-import Collapsible from 'react-native-collapsible-header';
+import ImagePicker from 'react-native-image-picker'
+import Collapsible from 'react-native-collapsible-header'
 // import {fetch_one_episode} from '../stores/episodeAction'
 
-class EpisodeDetailScreen extends Component {
+class DetailScreen extends Component {
   componentDidMount() {
     // let {params} = this.props.navigation.state
     // this.props.fetchOne(params.id)
@@ -56,6 +56,7 @@ class EpisodeDetailScreen extends Component {
         text : 'Been Here'
       },
     ]
+    const detailList = this.props.detailList
     return (
       ep ?
         (
@@ -65,18 +66,17 @@ class EpisodeDetailScreen extends Component {
               max={150}
               backgroundColor="#000000"
               renderHeader={(
-                <ImageBackground style={styles.headerImage} source={{uri: ep.Poster}} resizeMode={'cover'}>
+                <ImageBackground style={styles.headerImage} source={{uri: detailList.salon.images}} resizeMode={'contain'}>
                   <StatusBar barStyle="light-content" backgroundColor="black"/>
                   <Button style={styles.goBack} transparent onPress={() => this.props.navigation.goBack()}>
                     <Icon style={styles.iconGoBack} name="ios-arrow-round-back"/>
                   </Button>
-                  <Text style={{color: 'white',}}>Rating <Text
-                    style={{fontSize: 60}}>{ep.Ratings}</Text></Text>
+                  
                 </ImageBackground>
               )}
               renderContent={
                 <Content style={{margin: 20, flex: 1}}>
-                  <Text style={{fontSize: 30,alignSelf: 'center', fontFamily: 'niagara', color: 'black'}}>{ep.Title.toUpperCase()}</Text>
+                  <Text style={{fontSize: 30,alignSelf: 'center', fontFamily: 'niagara', color: 'black'}}>{detailList.salon.name}</Text>
                   <Text style={{fontSize: 20,alignSelf: 'center', fontFamily: 'niagara', color: 'black'}}>serpong utara tanggerang</Text>
                   <View style={styles.displayFlex}>
                     <Text>───────── </Text>
@@ -98,16 +98,14 @@ class EpisodeDetailScreen extends Component {
                     })}
                   </View>
                   <View style={{ borderBottomWidth: 1.5, borderBottomColor: '#D28496', marginBottom: 20, marginTop: 20 }}/>
-                  <H3>PLOT</H3>
-                  <Text>{ep.Plot}</Text>
-                  <View style={styles.line}/>
                   <H3>INFO</H3>
-                  <Text>Call</Text>
-                  <Text>080320830823</Text>
-                  <Text>Addres</Text>
-                  <Text>Serpong Utara Tanggerang</Text>
+                  <Text>{detailList.salon.branch[0].address}</Text>
                   
+                  <Text></Text>
                   <View style={styles.line}/>
+                  <H3>Photo</H3>
+                  
+                  <View style={[styles.line,{marginTop: 30}]}/>
                   
                 </Content>
               }
@@ -183,6 +181,7 @@ const styles = StyleSheet.create({
 
 const mapStateToProps = (state) => ({
   // episode: state.episodeReducer.episode
+  detailList: state.detailList
 })
 
 const mapDispatchToProps = (dispatch) => ({
@@ -190,4 +189,4 @@ const mapDispatchToProps = (dispatch) => ({
 })
 
 
-export default connect(mapStateToProps, mapDispatchToProps)(EpisodeDetailScreen)
+export default connect(mapStateToProps, mapDispatchToProps)(DetailScreen)

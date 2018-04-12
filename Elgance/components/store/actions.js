@@ -33,24 +33,33 @@ export const AllCategory = (data) => ({
   }
 });
 
+export const DetailList = (data) => ({
+  type: "DETAILLIST_ACTION",
+  payload: {
+    data
+  }
+});
+
 export const login_user = obj => {
   return async (dispatch, getState) => {
     return new Promise((resolve, reject) => {
       axios
         .post(`http://Hapi-aja.herokuapp.com/user/sign_in`, obj)
         .then(({ data }) => {
-          console.log("masuk");
-          AsyncStorage.setItem("token", data.token)
+          let objLogin = {
+            token: data.token,
+            alreadyLogin: true,
+            username: obj.username,
+            password: obj.password
+          }
+
+          AsyncStorage.setItem("credential", JSON.stringify(objLogin))
             .then(result => {
               console.log('dateng token')
               
             })
             .catch(err => {});
-            let objLogin = {
-              token: data.token,
-              alreadyLogin: true,
-              username: obj.username
-            };
+            
 
             console.log(objLogin);
             dispatch(LoginAction(objLogin));

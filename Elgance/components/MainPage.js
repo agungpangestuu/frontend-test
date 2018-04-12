@@ -78,7 +78,7 @@ class MainPage extends Component {
               <Icon
                 name="ios-arrow-down-outline"
                 style={{ fontSize: 30, color: "white" }}
-                onPress={() => navigate({routeName:"DetailScreen", key: 'screenDetail1'})}
+                
               />
             </Button>
           </Body>
@@ -88,7 +88,7 @@ class MainPage extends Component {
             </Button>
           </Right>
         </Header>
-        <Tabs allCategory={this.props.getSearch ? this.props.getSearch : this.props.getAllCategory}/>
+        <Tabs navigation={this.props.navigation} />
       </Container>
       </Drawer>
     );
