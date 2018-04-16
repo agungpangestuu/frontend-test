@@ -17,7 +17,7 @@ import Collapsible from "react-native-collapsible-header";
 class SideBar extends Component {
   handleLogoutButton() {
     // this.props.closeDrawer()
-    AsyncStorage.removeItem('token').then(result => {
+    AsyncStorage.removeItem('credential').then(result => {
       this.props.navigator({ routeName: "Home", key: "SignScreen1" })
     }).catch(err => console.log(err))
   }

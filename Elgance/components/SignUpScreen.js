@@ -64,12 +64,12 @@ class SignUp extends Component {
                         </Item>
                         <Item style={{ marginLeft: 35, marginRight: 35, marginBottom: 20, borderBottomColor: 'black', borderBottomWidth: 2 }}>
                             <Icon active name="ios-contact" />
-                            <Input placeholder="Username"
+                            <Input placeholder="Email"
                                 ref="username"
                                 onSubmitEditing={() => this._focusNextField('password')}
                                 returnKeyType={"next"}
                                 blurOnSubmit={false}
-                                placeholder="Username"
+                                placeholder="Email"
                                 onChangeText={username => this.setState({ username: username })}
                                 value={this.state.username}
                             />

@@ -13,10 +13,7 @@ export class componentName extends Component {
     }
   }
   componentDidMount() {
-    // this.props.setAllCategory().then(result => {
       AsyncStorage.getItem('credential').then(result => {
-        console.log(result)
-        Alert.alert(result)
         if(result){
           const { navigate } = this.props.navigation
           const credential = JSON.parse(result)
@@ -24,12 +21,14 @@ export class componentName extends Component {
             username: credential.username,
             password: credential.password
           }
-          Alert.alert(credential)
           this.props.postLogin_state(obj).then(resultLogin => {
+            this.props.setAllCategory().then(result => {
             navigate({routeName: 'MainPage', key: 'MainPage1'})
+          }).catch(err => {
+              console.log(err)
+            })
           }).catch(err => this.setState({isLoading: false}))
           
-  
         } else {
           this.setState({isLoading: false})
         }
@@ -38,12 +37,17 @@ export class componentName extends Component {
           Alert.alert(err)
           this.setState({isLoading: false})
       })
-      this.setState({isLoading: false})
-    // }).catch(err => {
-    //   console.log(err)
-    // })
+      
    
-}
+  }
+ componentWillMount() {
+  this.props.setAllCategory().then(result => {
+    console.log(result)
+  })
+  .catch(err => {
+    console.log(err)
+  })
+ }
   render() {
       const { navigate } = this.props.navigation
       console.log(this.state.isLoading)
@@ -73,11 +77,9 @@ export class componentName extends Component {
         );
       } else {
         return (
-          <Container style={{flex: 1,alignContent: 'center', justifyContent: 'center',}}>
-          <Content >
+          <View style={{flex: 1,alignContent: 'center', justifyContent: 'center', alignItems: 'center'}}>
             <Spinner color="blue" style={{alignSelf: 'center'}}/>
-          </Content>
-        </Container>
+          </View>
         )
       }
     }

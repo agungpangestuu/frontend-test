@@ -52,18 +52,13 @@ export const login_user = obj => {
             username: obj.username,
             password: obj.password
           }
-
+          
           AsyncStorage.setItem("credential", JSON.stringify(objLogin))
             .then(result => {
-              console.log('dateng token')
-              
+              dispatch(LoginAction(objLogin));
+              resolve(objLogin);
             })
             .catch(err => {});
-            
-
-            console.log(objLogin);
-            dispatch(LoginAction(objLogin));
-            resolve(true);
         })
         .catch(err => {
           console.log(err);
@@ -107,11 +102,11 @@ export const getLocations = (origin, dest) => {
 
 export const getAllCategory = () => {
   return (dispatch, getState) => {
+    
     return new Promise((resolve, reject) => {
       axios.get(`http://Hapi-aja.herokuapp.com/saloncategory`, {headers: {'Authorization': `Bearer ${getState().login.token}`}})
       .then( ({ data }) => {
         console.log('ini data all category',data)
-        // JSON.parse(data)
         dispatch(AllCategory(data))
         resolve(data)
       })

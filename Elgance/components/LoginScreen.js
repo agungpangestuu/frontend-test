@@ -35,6 +35,7 @@ class Login extends Component {
         }
 
         this.props.postLogin_state(LoginEvent).then(result => {
+            console.log('ini result : ',result)
             this.props.setAllCategory().then(result => {
                 navigate({routeName: 'MainPage', key: 'MainPage1'})
               }).catch(err => {

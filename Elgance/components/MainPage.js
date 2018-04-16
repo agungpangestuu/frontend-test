@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import { connect } from "react-redux"
-import { View, Dimensions, NativeModules, processColor } from "react-native";
+import { View, Dimensions, NativeModules, processColor, BackHandler, Platform } from "react-native";
 import {
   Container,
   Title,
@@ -32,10 +32,21 @@ class MainPage extends Component {
     }
   }
   componentDidMount() {
-    
-      StatusBarManager.setColor(processColor("#ff0000"), false);
+    StatusBarManager.setColor(processColor("#ff0000"), false);
+  }
+  componentWillMount() {
+    if (Platform.OS !== 'android') return
+    BackHandler.addEventListener('hardwareBackPress', () => {
+        const { dispatch, nav } = this.props
+        console.log('ini nav rooute : ', nav)
+        // if (nav.routes.length === 1 && (nav.routes[0].routeName === 'Login' || nav.routes[0].routeName === 'Start')) return false
+        // dispatch({ type: 'Navigation/BACK' })
+        // return true
+    })
+  }
 
-    
+  componentWillUnmount() {
+    if (Platform.OS === 'android') BackHandler.removeEventListener('hardwareBackPress')
   }
   closeDrawer() {
     this._drawer._root.close()
@@ -43,6 +54,7 @@ class MainPage extends Component {
   openDrawer() {
     this._drawer._root.open()
   };
+
   render() {
     const { navigate } = this.props.navigation;
     return (
