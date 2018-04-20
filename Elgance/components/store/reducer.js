@@ -11,7 +11,10 @@ const initialState = {
     username: '',
     alreadySign: '',
     token: '',
-    fullname: ''
+    fullname: '',
+    bookmark: null,
+    rescent: null,
+    id: ''
   },
   signUp: false,
   mainPage: {
@@ -44,6 +47,11 @@ export const reducer = (state = initialState, action) => {
       return {
         ...state,
         detailList: action.payload.data
+      };
+    case "SEARCH_ACTION":
+      return {
+        ...state,
+        search: action.payload.data
       };
     default:
       return state;

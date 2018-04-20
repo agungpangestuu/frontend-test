@@ -110,7 +110,6 @@ var locationInBanten = [
   ]
 
 export function data(position) {
-    console.log('ini position',position)
     var count = 0
     locationInBanten.forEach( (item, index) => {
         count+= 1

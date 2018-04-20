@@ -49,8 +49,9 @@ class SideBar extends Component {
             <TouchableOpacity
               onPress={() =>
                 this.props.navigator({
-                  routeName: "SearchScreen",
-                  key: "Login1"
+                  routeName: "RecentScreen",
+                  key: "Login1",
+                  params: 'Bookmark'
                 })
               }
             >
@@ -61,8 +62,9 @@ class SideBar extends Component {
             <TouchableOpacity
               onPress={() =>
                 this.props.navigator({
-                  routeName: "SearchScreen",
-                  key: "Login1"
+                  routeName: "RecentScreen",
+                  key: "Login2",
+                  params: 'Recent Salon'
                 })
               }
             >

@@ -19,34 +19,33 @@ class TabScreen extends Component {
       isloading: true
     }
   }
-  componentDidMount(){
-    console.log('ini props',this.props)
+  componentWillMount(){
     if(this.props.getAllCategory){
       console.log('asuuuu')
       var count  = 0
       this.props.getAllCategory.forEach((element, index) => {
         count= count + 1
         switch (element.category) {
-          case 'Hair': this.setState({Hair: element.data})
+          case 'Hair': return this.setState({Hair: element.data})
             break;
-          case 'Eyelashes': this.setState({Eyelashes: element.data})
+          case "Eyelashes": return this.setState({Eyelashes: element.data})
             break;
-          case 'Bridal': this.setState({Bridal: element.data})
+          case 'Bridal': return this.setState({Bridal: element.data})
             break;
-          case 'Nails': this.setState({Nails: element.data})
-           break;
-           case 'Brow': this.setState({Brow: element.data})
-           break;
-        }
-        if(count == this.props.getAllCategory.length) {
-          this.setState({isLoading: false})
+          case 'Nails': return this.setState({Nails: element.data})
+            break;
+          case 'Brow': return this.setState({Brow: element.data})
+            break;
         }
       });
     }
     
   }
   componentDidUpdate(){
-
+   
+  }
+  componentDidMount() {
+      this.setState({isLoading: false})
   }
   
   _handleAllCategory(category) {

@@ -25,7 +25,6 @@ class CardImageExample extends Component {
         return (
 
           <CardBox tab={this.props.tab}>
-
             <View style={{ flexWrap: 'wrap', flex: 1, flexDirection: 'row' }}>
 
               {data.map(item => {
