@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { StyleSheet, AsyncStorage, ImageBackground, View, TouchableOpacity, Alert } from 'react-native';
-import { Container, Header, Left, Content, Item, Input, Icon, Button, Text } from 'native-base';
+import { StyleSheet, AsyncStorage, ImageBackground, View, TouchableOpacity, Alert, Keyboard } from 'react-native';
+import { Container, Header, Left, Content, Item, Input, Icon, Button, Text, Spinner } from 'native-base';
 
 import { login_user, getAllCategory } from "./store/actions"
 
@@ -10,7 +10,9 @@ class Login extends Component {
         super()
         this.state = {
             username: null,
-            password: null
+            password: null,
+            error: false,
+            isLoading: false
         }
     }
     
@@ -27,13 +29,14 @@ class Login extends Component {
 
     handleSubmit(e) {
         e.preventDefault()
+        this.setState({isLoading: true})
         const { navigate } = this.props.navigation
 
         let LoginEvent = {
             username: this.state.username,
             password: this.state.password
         }
-
+        Keyboard.dismiss()
         this.props.postLogin_state(LoginEvent).then(result => {
             console.log('ini result : ',result)
             this.props.setAllCategory().then(result => {
@@ -43,9 +46,24 @@ class Login extends Component {
               })
            
         }).catch(err => {
+            this.setState({error: true, isLoading: false},
+            Keyboard.dismiss())
             Alert.alert('Please Fill The Blank')
         })
         
+    }
+
+    handleLoadingAfterSubmit() {
+            return (
+                  <Spinner color="blue" style={{alignSelf: 'center'}}/>
+              )
+    }
+    handleNotLoadingAfterSubmit(){
+        return (
+            <Button rounded light onPress={(e) => this.handleSubmit(e)} style={{ alignSelf: 'center', width: 250, marginBottom: 20, justifyContent: 'center', alignContent: 'center' }}>
+                <Text style={{ textAlign: 'center' }}>Sign In</Text>
+            </Button>
+        )
     }
 
     handleUsernameChange(e) {
@@ -58,7 +76,6 @@ class Login extends Component {
     render() {
         return (
             <View style={styles.backgroundImage}>
-                
                     <View
                         style={{
                             backgroundColor: 'white',
@@ -70,7 +87,7 @@ class Login extends Component {
                     >
                         <Text style={{ fontWeight: 'bold', fontSize: 50, marginBottom: 30 }}>Login</Text>
 
-                        <Item style={{ marginLeft: 35, marginRight: 35, marginBottom: 20, borderBottomColor: 'black', borderBottomWidth: 2 }}>
+                        <Item error={this.state.error ? true : false} style={this.state.error ? styles.error : { marginLeft: 35, marginRight: 35, marginBottom: 20, borderBottomColor: 'black', borderBottomWidth: 2 }}>
                             <Icon active name="ios-contact" />
                             <Input placeholder="Username"
                                 ref="username"
@@ -83,7 +100,7 @@ class Login extends Component {
                             />
                         </Item>
 
-                        <Item style={{ marginLeft: 35, marginRight: 35, marginBottom: 60, borderBottomColor: 'black', borderBottomWidth: 2 }}>
+                        <Item error={this.state.error} style={this.state.error ? styles.error : { marginLeft: 35, marginRight: 35, marginBottom: 60, borderBottomColor: 'black', borderBottomWidth: 2 }}>
                             <Icon active name="ios-lock" />
                             <Input placeholder="Password" secureTextEntry={true}
                                 ref="password"
@@ -95,9 +112,7 @@ class Login extends Component {
                                 value={this.state.password}
                             />
                         </Item>
-                        <Button rounded light onPress={(e) => this.handleSubmit(e)} style={{ alignSelf: 'center', width: 250, marginBottom: 20, justifyContent: 'center', alignContent: 'center' }}>
-                            <Text style={{ textAlign: 'center' }}>Sign In</Text>
-                        </Button>
+                        {this.state.isLoading ?(this.handleLoadingAfterSubmit()) : (this.handleNotLoadingAfterSubmit()) }
                         <Text style={{ marginBottom: 20 }}>Or</Text>
                         <Button rounded info style={{ alignSelf: 'center', width: 250, marginBottom: 30, justifyContent: 'center', alignContent: 'center' }}>
                             <Icon active name="logo-facebook" />
@@ -129,6 +144,13 @@ const styles = StyleSheet.create({
         backgroundColor: 'rgba(0,0,0,0)',
         fontSize: 32,
     },
+    error: {
+        marginLeft: 35,
+        marginRight: 35,
+        marginBottom: 60,
+        borderBottomColor: 'red',
+        borderBottomWidth: 2
+    }
 });
 
 const mapStateToProps = (state) => ({

@@ -29,7 +29,6 @@ class CardImageExample extends Component {
 
               {data.map(item => {
                 console.log(item.salon)
-                if (item.salon.branch.length > 0) {
                   return (
                     <TouchableOpacity onPress={() => { this._handlePress(item, item.salon._id) }}>
                       <Card style={{ height: 250, width: width / 3 + 15, flex: 0, flexGrow: 1 }}>
@@ -38,17 +37,11 @@ class CardImageExample extends Component {
                         </CardItem>
                         <CardItem style={{ flex: 1, flexDirection: 'column' }}>
                           <Text style={{ textAlign: 'center', fontFamily: "niagara", marginBottom: 10 }}>{item.salon.name}</Text>
-                          <Text style={{ textAlign: 'center', fontFamily: "niagara" }}>{item.salon.branch[0].address}</Text>
+                          <Text style={{ textAlign: 'center', fontFamily: "niagara" }}>{item.salon.contact}</Text>
                         </CardItem>
                       </Card>
                     </TouchableOpacity>
                   )
-                }
-                else {
-                  return (
-                    <Content />
-                  )
-                }
               })}
             </View>
           </CardBox>
