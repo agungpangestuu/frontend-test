@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import {connect} from 'react-redux'
-import {ActivityIndicator, TouchableOpacity, ImageBackground, StatusBar, StyleSheet, Text, View,} from 'react-native';
+import {ActivityIndicator,AsyncStorage, TouchableOpacity, ImageBackground, StatusBar, StyleSheet, Text, View,} from 'react-native';
 import Call from 'react-native-phone-call'
 import {Button, Container, Content, H3, Badge, Icon} from 'native-base'
 import ImagePicker from 'react-native-image-picker'
