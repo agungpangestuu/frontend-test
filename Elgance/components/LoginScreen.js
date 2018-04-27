@@ -48,7 +48,7 @@ class Login extends Component {
         }).catch(err => {
             this.setState({error: true, isLoading: false},
             Keyboard.dismiss())
-            Alert.alert('Please Fill The Blank')
+            Alert.alert('UserName or Password Wrong ...')
         })
         
     }

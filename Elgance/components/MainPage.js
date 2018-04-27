@@ -16,6 +16,7 @@ import {
   Text,
   Drawer
 } from "native-base";
+import { NavigationActions } from 'react-navigation'
 
 import Tabs from "./TabScreen";
 import SideBar from './SideBar';
@@ -23,6 +24,12 @@ import {getAllCategory} from './store/actions'
 
 var { height, width } = Dimensions.get("window");
 const { StatusBarManager } = NativeModules;
+const resetAction = NavigationActions.reset({
+  index: 0,
+  actions: [
+    NavigationActions.navigate({ routeName: 'MainPage'})
+  ]
+})
 
 class MainPage extends Component {
   constructor(){
@@ -35,18 +42,29 @@ class MainPage extends Component {
     StatusBarManager.setColor(processColor("#ff0000"), false);
   }
   componentWillMount() {
+    // this.props.navigation.dispatch(resetAction)
     if (Platform.OS !== 'android') return
-    BackHandler.addEventListener('hardwareBackPress', () => {
-        const { dispatch, nav } = this.props
-        console.log('ini nav rooute : ', nav)
-        // if (nav.routes.length === 1 && (nav.routes[0].routeName === 'Login' || nav.routes[0].routeName === 'Start')) return false
-        // dispatch({ type: 'Navigation/BACK' })
-        // return true
-    })
+    BackHandler.addEventListener('hardwareBackPress', this.onBackButtonPressAndroid)
+    // , () => {
+    //     const { dispatch, nav } = this.props
+    //     console.log('ini nav rooute : ', nav)
+    //     // if (nav.routes.length === 1 && (nav.routes[0].routeName === 'Login' || nav.routes[0].routeName === 'Start')) return false
+    //     // dispatch({ type: 'Navigation/BACK' })
+    //     // return true
+    // })
   }
 
+  onBackButtonPressAndroid = () => {
+    if (this.isSelectionModeEnabled()) {
+      this.disableSelectionMode();
+      return true;
+    } else {
+      return false;
+    }
+  };
+
   componentWillUnmount() {
-    if (Platform.OS === 'android') BackHandler.removeEventListener('hardwareBackPress')
+    if (Platform.OS === 'android') BackHandler.removeEventListener('hardwareBackPress', this.onBackButtonPressAndroid)
   }
   closeDrawer() {
     this._drawer._root.close()
