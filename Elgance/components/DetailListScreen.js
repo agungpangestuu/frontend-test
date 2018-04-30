@@ -1,25 +1,29 @@
 import React, {Component} from 'react';
 import {connect} from 'react-redux'
-import {ActivityIndicator,AsyncStorage, TouchableOpacity, ImageBackground, StatusBar, StyleSheet, Text, View,} from 'react-native';
+import {ActivityIndicator,AsyncStorage, TouchableOpacity, ImageBackground, StatusBar, StyleSheet, Text, View, BackHandler, Alert} from 'react-native';
 import Call from 'react-native-phone-call'
 import {Button, Container, Content, H3, Badge, Icon} from 'native-base'
 import ImagePicker from 'react-native-image-picker'
 import Collapsible from 'react-native-collapsible-header'
+import AwesomeAlert from 'react-native-awesome-alerts';
 // import {fetch_one_episode} from '../stores/episodeAction'
 import {postBookmark, postRecent} from './store/actions'
 
 class DetailScreen extends Component {
-  constructor() {
-    super()
+  constructor(props) {
+    super(props)
     this.state = {
       bookmark: false,
-      beenHere: false
+      beenHere: false,
+      showAlert: false,
+      itemId: 0
     }
+    this.handleBackAndroid = this._handleBackAndroid.bind(this)
   }
   componentDidMount() {
     let {params} = this.props.navigation.state
     // this.props.fetchOne(params.id)
-    console.log('ini detail props list ',this.props.detailList)
+    console.log('ini detail props list ',this.props)
     let bookmark = this.props.getData.bookmark.filter(item => item.salon._id === params)
     let beenHere = this.props.getData.recent.filter(element => element.salon._id === params)
 
@@ -31,21 +35,31 @@ class DetailScreen extends Component {
   }
 
   componentWillMount() {
+    BackHandler.addEventListener('hardwareBackPress', this.handleBackAndroid);
     const { state } = this.props.navigation
-    AsyncStorage.getItem('credential').then(result => {
-      result = JSON.parse(result)
-      let objUser = {
-        username: result.username,
-        password: result.password
-      }
+    // AsyncStorage.getItem('credential').then(result => {
+    //   result = JSON.parse(result)
+    //   let objUser = {
+    //     username: result.username,
+    //     password: result.password
+    //   }
       
-      this.props.postLogin_state(objUser).then(sukses => {
-        console.log()
-      }).catch(err => console.log(err))
+    //   this.props.postLogin_state(objUser).then(sukses => {
+    //     console.log()
+    //   }).catch(err => console.log(err))
 
-    }).catch(err => {
-      console.log(err)
-    })
+    // }).catch(err => {
+    //   console.log(err)
+    // })
+  }
+
+  _handleBackAndroid() {
+    this.props.navigation.goBack();
+    return true;
+  } 
+
+  componentWillUnmount() {
+    BackHandler.removeEventListener('hardwareBackPress', this.handleBackAndroid)
   }
 
   handleBookmark() {
@@ -60,27 +74,42 @@ class DetailScreen extends Component {
 
   handleRecent() {
     const {state} = this.props.navigation
-    if(this.state.beenHere) {
-      this.setState({beenHere: false}, this.props.recentPost(this.props.getData.id, state.params)) 
-    } else {
+    
       this.setState({beenHere: true}, this.props.recentPost(this.props.getData.id, state.params))
-    }
+
   }
 
-  handlePress(id) {
+  handlePress(item) {
     let arg = {
-      number: '081282713295',
+      number: this.props.detailList.salon.phone,
       prompt: false
     }
-    switch (id) {
+    switch (item.id) {
       case 1:Call(arg).catch(console.error)
 
         break;
-      case 3:this.handleBookmark()
+      case 3: Alert.alert(
+        '',
+        (this.state.bookmark) ? 'Apakah anda ingin menghapus bookmark salon ini ?' : 'Apakah anda ingin bookmark salon ini ?',
+        [
+          {text: 'Cancel', onPress: () => console.log('Cancel Pressed'), style: 'cancel'},
+          {text: 'OK', onPress: () => this.handleBookmark() },
+        ],
+        { cancelable: false }
+      )
         break;
-      case 5:this.handleRecent()
+      case 5: (this.state.beenHere) ? '' : Alert.alert(
+        '',
+        'Apakah anda yakin telah ke salon ini ?',
+        [
+          {text: 'Cancel', onPress: () => console.log('Cancel Pressed'), style: 'cancel'},
+          {text: 'OK', onPress: () => this.handleRecent() },
+        ],
+        { cancelable: false }
+      )
         break;
     }
+    
     
   }
 
@@ -88,7 +117,7 @@ class DetailScreen extends Component {
     if(item.id === 3 ) {
       return (
         <View style={{flex: 1, flexDirection: 'column', alignContent: 'center', alignItems: 'center', justifyContent: 'space-around'}}>
-          <TouchableOpacity onPress={() => this.handlePress(item.id)} style={{flex: 1, flexDirection: 'column', alignContent: 'center', alignItems: 'center', justifyContent: 'space-around'}}>
+          <TouchableOpacity onPress={() => this.handlePress(item)} style={{flex: 1, flexDirection: 'column', alignContent: 'center', alignItems: 'center', justifyContent: 'space-around'}}>
             <Icon style={this.state.bookmark ? {color: 'white'} : {color: '#D28496'}} name={item.icon} />
             <Text style={item.text.length > 8 ? {marginLeft :10, textAlign: 'center',marginRight: 10, color: '#D28496'}: {alignItems: 'center', color: '#D28496'}}>{item.text}</Text>
           </TouchableOpacity>
@@ -98,7 +127,7 @@ class DetailScreen extends Component {
     else if(item.id === 5) {
       return (
         <View style={{flex: 1, flexDirection: 'column', alignContent: 'center', alignItems: 'center', justifyContent: 'space-around'}}>
-          <TouchableOpacity onPress={() => this.handlePress(item.id)} style={{flex: 1, flexDirection: 'column', alignContent: 'center', alignItems: 'center', justifyContent: 'space-around'}}>
+          <TouchableOpacity onPress={() => this.handlePress(item)} style={{flex: 1, flexDirection: 'column', alignContent: 'center', alignItems: 'center', justifyContent: 'space-around'}}>
             <Icon style={this.state.beenHere ? {color: 'white'} : {color: '#D28496'}} name={item.icon} />
             <Text style={item.text.length > 8 ? {marginLeft :10, textAlign: 'center',marginRight: 10, color: '#D28496'}: {alignItems: 'center', color: '#D28496'}}>{item.text}</Text>
           </TouchableOpacity>
@@ -108,14 +137,16 @@ class DetailScreen extends Component {
     else {
       return (
         <View style={{flex: 1, flexDirection: 'column', alignContent: 'center', alignItems: 'center', justifyContent: 'space-around'}}>
-          <TouchableOpacity onPress={() => this.handlePress(item.id)} style={{flex: 1, flexDirection: 'column', alignContent: 'center', alignItems: 'center', justifyContent: 'space-around'}}>
-            <Icon style={this.state.bookmark && item.id === 3 ? {color: 'white'} : {color: '#D28496'}} name={item.icon} />
+          <TouchableOpacity onPress={() => this.handlePress(item)} style={{flex: 1, flexDirection: 'column', alignContent: 'center', alignItems: 'center', justifyContent: 'space-around'}}>
+            <Icon style={{color: '#D28496'}} name={item.icon} />
             <Text style={item.text.length > 8 ? {marginLeft :10, textAlign: 'center',marginRight: 10, color: '#D28496'}: {alignItems: 'center', color: '#D28496'}}>{item.text}</Text>
           </TouchableOpacity>
         </View>
       )
     }
   }
+
+  
 
   render() {
     const ep = {
@@ -153,6 +184,8 @@ class DetailScreen extends Component {
       },
     ]
     const detailList = this.props.detailList
+    const {showAlert} = this.state;
+    
     return (
       !detailList.salon.contact ?
         (
@@ -247,6 +280,25 @@ class DetailScreen extends Component {
                   
                 </Content>
               }
+            />
+            <AwesomeAlert
+              show={showAlert}
+              showProgress={false}
+              title="AwesomeAlert"
+              message="I have a message for you!"
+              closeOnTouchOutside={true}
+              closeOnHardwareBackPress={false}
+              showCancelButton={true}
+              showConfirmButton={true}
+              cancelText="No, cancel"
+              confirmText="Yes, delete it"
+              confirmButtonColor="#DD6B55"
+              onCancelPressed={() => {
+                this.hideAlert(false);
+              }}
+              onConfirmPressed={() => {
+                this.hideAlert(true);
+              }}
             />
           </Container>
         )

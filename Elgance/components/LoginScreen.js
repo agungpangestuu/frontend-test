@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { StyleSheet, AsyncStorage, ImageBackground, View, TouchableOpacity, Alert, Keyboard } from 'react-native';
 import { Container, Header, Left, Content, Item, Input, Icon, Button, Text, Spinner } from 'native-base';
+import { NavigationActions } from "react-navigation"
 
 import { login_user, getAllCategory } from "./store/actions"
 
@@ -40,7 +41,13 @@ class Login extends Component {
         this.props.postLogin_state(LoginEvent).then(result => {
             console.log('ini result : ',result)
             this.props.setAllCategory().then(result => {
-                navigate({routeName: 'MainPage', key: 'MainPage1'})
+                const resetAction = NavigationActions.reset({
+                    index: 0,
+                    actions: [
+                      NavigationActions.navigate({ routeName: 'MainPage' }),
+                    ],
+                  });
+                  this.props.navigation.dispatch(resetAction);
               }).catch(err => {
                 console.log(err)
               })

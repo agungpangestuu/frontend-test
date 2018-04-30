@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import { connect } from "react-redux"
-import { View, Dimensions, NativeModules, processColor, BackHandler, Platform } from "react-native";
+import { View, Dimensions, NativeModules, processColor, BackHandler, Platform, Alert } from "react-native";
 import {
   Container,
   Title,
@@ -37,35 +37,35 @@ class MainPage extends Component {
     this.state = {
       allCategory : null
     }
+    this.handleBackButtonClick = this._handleBackButtonClick.bind(this)
   }
   componentDidMount() {
+    console.log(this.props.navigation)
     StatusBarManager.setColor(processColor("#ff0000"), false);
   }
   componentWillMount() {
-    // this.props.navigation.dispatch(resetAction)
-    if (Platform.OS !== 'android') return
-    BackHandler.addEventListener('hardwareBackPress', this.onBackButtonPressAndroid)
-    // , () => {
-    //     const { dispatch, nav } = this.props
-    //     console.log('ini nav rooute : ', nav)
-    //     // if (nav.routes.length === 1 && (nav.routes[0].routeName === 'Login' || nav.routes[0].routeName === 'Start')) return false
-    //     // dispatch({ type: 'Navigation/BACK' })
-    //     // return true
-    // })
+    BackHandler.addEventListener('hardwareBackPress', this.handleBackButtonClick);
+    
   }
-
-  onBackButtonPressAndroid = () => {
-    if (this.isSelectionModeEnabled()) {
-      this.disableSelectionMode();
-      return true;
-    } else {
-      return false;
-    }
-  };
-
+  _handleBackButtonClick() {
+    this.props.navigation.goBack(null);
+    Alert.alert(
+      '',
+      'Apakah anda ingin keluar dari aplikasi ini ?',
+      [
+        {text: 'Cancel', onPress: () => console.log('Cancel Pressed'), style: 'cancel'},
+        {text: 'OK', onPress: () => BackHandler.exitApp() },
+      ],
+      { cancelable: false }
+    )
+    return true;
+  } 
   componentWillUnmount() {
-    if (Platform.OS === 'android') BackHandler.removeEventListener('hardwareBackPress', this.onBackButtonPressAndroid)
+    BackHandler.removeEventListener('hardwareBackPress', this.handleBackButtonClick)
   }
+
+  component
+
   closeDrawer() {
     this._drawer._root.close()
   };
@@ -78,7 +78,7 @@ class MainPage extends Component {
     return (
       <Drawer
         ref={(ref) => { this._drawer = ref; }}
-        content={<SideBar navigator={ navigate } closeDrawer={this.closeDrawer} />}
+        content={<SideBar navigator={ navigate } dispatch={this.props.navigation.dispatch} closeDrawer={this.closeDrawer} />}
         onClose={() => this.closeDrawer()} >
 
       <Container>

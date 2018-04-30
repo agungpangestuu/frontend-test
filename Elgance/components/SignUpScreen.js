@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { StyleSheet, ImageBackground, View, TouchableOpacity, Alert } from 'react-native';
 import { Container, Header, Left, Content, Item, Input, Icon, Button, Text, Spinner } from 'native-base';
+import { NavigationActions } from "react-navigation"
 
 import { signup_user } from "./store/actions"
 class SignUp extends Component {
@@ -35,8 +36,6 @@ class SignUp extends Component {
     handleSubmit(e) {
         e.preventDefault()
         this.setState({isLoading: true, error :false})            
-        
-        const { navigate } = this.props.navigation
 
         let signUpData = {
             username: this.state.username,
@@ -44,7 +43,13 @@ class SignUp extends Component {
             fullname: this.state.fullname
         }
         this.props.post_state(signUpData).then(result => {
-            navigate({routeName: 'LoginScreen', key: 'LoginScreen1'})            
+            const resetAction = NavigationActions.reset({
+                index: 0,
+                actions: [
+                  NavigationActions.navigate({ routeName: 'LoginScreen' }),
+                ],
+              });
+              this.props.navigation.dispatch(resetAction);        
         }).catch(err => {
             this.setState({isLoading: false, error :true})
             Alert.alert('Please Fill The Blank')            

@@ -1,7 +1,8 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import {StyleSheet, AsyncStorage, ImageBackground, View, Alert} from 'react-native';
+import {StyleSheet, AsyncStorage, ImageBackground, View, Alert, BackHandler} from 'react-native';
 import {Container, Header, Content, Item, Input, Icon, Button, Text, Spinner} from 'native-base'; 
+import { NavigationActions } from 'react-navigation'
 
 import { getAllCategory, login_user } from "./store/actions"
 
@@ -11,11 +12,12 @@ export class componentName extends Component {
     this.state = {
       isLoading: true
     }
+    this.handleBackButtonClick = this._handleBackButtonClick.bind(this)
   }
   componentDidMount() {
       AsyncStorage.getItem('credential').then(result => {
         if(result){
-          const { navigate } = this.props.navigation
+          // const { NavigationActions } = this.props.navigation
           const credential = JSON.parse(result)
           let obj = {
             username: credential.username,
@@ -23,8 +25,16 @@ export class componentName extends Component {
           }
           this.props.postLogin_state(obj).then(resultLogin => {
             this.props.setAllCategory().then(result => {
-            navigate({routeName: 'MainPage', key: 'MainPage1'})
-          }).catch(err => {
+            // navigate({routeName: 'MainPage', key: 'MainPage1'})
+              const resetAction = NavigationActions.reset({
+                index: 0,
+                actions: [
+                  NavigationActions.navigate({ routeName: 'MainPage' }),
+                ],
+              });
+              this.props.navigation.dispatch(resetAction);
+            
+            }).catch(err => {
               console.log(err)
             })
           }).catch(err => this.setState({isLoading: false}))
@@ -40,14 +50,43 @@ export class componentName extends Component {
       
    
   }
- componentWillMount() {
-  this.props.setAllCategory().then(result => {
-    console.log(result)
-  })
-  .catch(err => {
-    console.log(err)
-  })
- }
+  componentWillMount() {
+    BackHandler.addEventListener('hardwareBackPress', this.handleBackButtonClick);    
+  }
+  _handleBackButtonClick() {
+    this.props.navigation.goBack(null);
+    Alert.alert(
+      '',
+      'Apakah anda ingin keluar dari aplikasi ini ?',
+      [
+        {text: 'Cancel', onPress: () => console.log('Cancel Pressed'), style: 'cancel'},
+        {text: 'OK', onPress: () => BackHandler.exitApp() },
+      ],
+      { cancelable: false }
+    )
+    return true;
+  } 
+  componentWillUnmount() {
+    BackHandler.removeEventListener('hardwareBackPress', this.handleBackButtonClick)
+  }
+  handleRouteNavigationSignIn() {
+    const resetAction = NavigationActions.reset({
+      index: 0,
+      actions: [
+        NavigationActions.navigate({ routeName: 'LoginScreen' }),
+      ],
+    });
+    this.props.navigation.dispatch(resetAction);
+  }
+  handleRouteNavigationSignUp() {
+    const resetAction = NavigationActions.reset({
+      index: 0,
+      actions: [
+        NavigationActions.navigate({ routeName: 'SignUpScreen' }),
+      ],
+    });
+    this.props.navigation.dispatch(resetAction);
+  }
   render() {
       const { navigate } = this.props.navigation
       console.log(this.state.isLoading)
@@ -65,11 +104,11 @@ export class componentName extends Component {
               }}
             >
               <Text style={{fontWeight: 'bold', fontSize: 50, marginBottom: 30}}>Login</Text>
-                <Button rounded light onPress={() => navigate("SignUpScreen")} style={{alignSelf: 'center', width: 250,marginBottom: 20, justifyContent: 'center', alignContent: 'center'}}>
+                <Button rounded light onPress={() => this.handleRouteNavigationSignUp()} style={{alignSelf: 'center', width: 250,marginBottom: 20, justifyContent: 'center', alignContent: 'center'}}>
                 <Text style={{textAlign: 'center', color: 'green'}}>SIGN UP</Text>
               </Button>
              
-              <Button rounded onPress={() => navigate({routeName: "LoginScreen", key: 'LoginScren1'})} style={{alignSelf: 'center', width: 250,marginBottom: 30, justifyContent: 'center', alignContent: 'center'}}>
+              <Button rounded onPress={() => this.handleRouteNavigationSignIn()} style={{alignSelf: 'center', width: 250,marginBottom: 30, justifyContent: 'center', alignContent: 'center'}}>
                 <Text style={{color: 'white'}}>SIGN IN</Text>
             </Button>
             </View>

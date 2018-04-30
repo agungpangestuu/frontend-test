@@ -13,12 +13,19 @@ import {
 import { connect } from "react-redux"
 import { Tabs, Tab,Thumbnail, Content, List, ListItem } from "native-base";
 import Collapsible from "react-native-collapsible-header";
+import { NavigationActions } from "react-navigation"
 
 class SideBar extends Component {
   handleLogoutButton() {
     // this.props.closeDrawer()
     AsyncStorage.removeItem('credential').then(result => {
-      this.props.navigator({ routeName: "Home", key: "SignScreen1" })
+      const resetAction = NavigationActions.reset({
+        index: 0,
+        actions: [
+          NavigationActions.navigate({ routeName: 'Home' }),
+        ],
+      });
+      this.props.dispatch(resetAction);
     }).catch(err => console.log(err))
   }
   render() {
