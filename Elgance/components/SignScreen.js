@@ -1,99 +1,76 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import {StyleSheet, AsyncStorage, ImageBackground, View, Alert, BackHandler} from 'react-native';
+import {StyleSheet, AsyncStorage, ImageBackground, View, Alert} from 'react-native';
 import {Container, Header, Content, Item, Input, Icon, Button, Text, Spinner} from 'native-base'; 
-import { NavigationActions } from 'react-navigation'
+import { NavigationActions } from "react-navigation"
 
-import { getAllCategory, login_user } from "./store/actions"
+import { getAllCategory, login_user, getNearest, LocationUser } from "./store/actions"
 
 export class componentName extends Component {
-  constructor(){
-    super()
+  constructor(props){
+    super(props)
     this.state = {
-      isLoading: true
+      isLoading: true,
+      longitude: null,
+      latitude: null
     }
-    this.handleBackButtonClick = this._handleBackButtonClick.bind(this)
   }
+
   componentDidMount() {
-      AsyncStorage.getItem('credential').then(result => {
-        if(result){
-          // const { NavigationActions } = this.props.navigation
-          const credential = JSON.parse(result)
-          let obj = {
-            username: credential.username,
-            password: credential.password
-          }
-          this.props.postLogin_state(obj).then(resultLogin => {
-            this.props.setAllCategory().then(result => {
-            // navigate({routeName: 'MainPage', key: 'MainPage1'})
-              const resetAction = NavigationActions.reset({
-                index: 0,
-                actions: [
-                  NavigationActions.navigate({ routeName: 'MainPage' }),
-                ],
-              });
-              this.props.navigation.dispatch(resetAction);
-            
-            }).catch(err => {
-              console.log(err)
-            })
-          }).catch(err => this.setState({isLoading: false}))
-          
-        } else {
-          this.setState({isLoading: false})
+    AsyncStorage.getItem('credential').then(result => {
+      console.log(result)
+      if(result){
+        const { navigate } = this.props.navigation
+        const credential = JSON.parse(result)
+        let obj = {
+          username: credential.username,
+          password: credential.password
         }
-      }).catch(err => {
-          console.log(err)
-          Alert.alert(err)
-          this.setState({isLoading: false})
-      })
-      
-   
+        this.props.postLogin_state(obj).then(resultLogin => {
+          this.props.setAllCategory().then(resultAll => {
+            const resetAction = NavigationActions.reset({
+              index: 0,
+              actions: [
+                NavigationActions.navigate({ routeName: 'MainPage' }),
+              ],
+            });
+            this.props.navigation.dispatch(resetAction);
+        }).catch(err => {
+            console.log(err)
+          })
+        }).catch(err => console.log(err))
+        
+      } else {
+        console.log('masuk else')
+        this.setState({isLoading: false})
+      }
+    }).catch(err => {
+      console.log(err)
+      this.setState({isLoading: false})      
+    })
+    
   }
-  componentWillMount() {
-    BackHandler.addEventListener('hardwareBackPress', this.handleBackButtonClick);    
-  }
-  _handleBackButtonClick() {
-    this.props.navigation.goBack(null);
-    Alert.alert(
-      '',
-      'Apakah anda ingin keluar dari aplikasi ini ?',
-      [
-        {text: 'Cancel', onPress: () => console.log('Cancel Pressed'), style: 'cancel'},
-        {text: 'OK', onPress: () => BackHandler.exitApp() },
-      ],
-      { cancelable: false }
-    )
-    return true;
-  } 
-  componentWillUnmount() {
-    BackHandler.removeEventListener('hardwareBackPress', this.handleBackButtonClick)
-  }
-  handleRouteNavigationSignIn() {
-    const resetAction = NavigationActions.reset({
-      index: 0,
-      actions: [
-        NavigationActions.navigate({ routeName: 'LoginScreen' }),
-      ],
-    });
-    this.props.navigation.dispatch(resetAction);
-  }
-  handleRouteNavigationSignUp() {
-    const resetAction = NavigationActions.reset({
-      index: 0,
-      actions: [
-        NavigationActions.navigate({ routeName: 'SignUpScreen' }),
-      ],
-    });
-    this.props.navigation.dispatch(resetAction);
-  }
+ 
+ componentWillMount() {
+  navigator.geolocation.getCurrentPosition(
+    (position) => {
+      let loc = {
+        lat : position.coords.latitude,
+        long : position.coords.longitude
+      }
+      this.props.locationActions(loc)
+    },
+    (error) => this.setState({ error: error.message }),
+    { enableHighAccuracy: false, timeout: 200000, maximumAge: 1000 }
+  );
+ }
+ 
   render() {
       const { navigate } = this.props.navigation
-      console.log(this.state.isLoading)
+
       { if (!this.state.isLoading) {
         return (
           <View  style={styles.backgroundImage}>
-         
             <View
               style={{
                 backgroundColor: 'white',
@@ -104,11 +81,11 @@ export class componentName extends Component {
               }}
             >
               <Text style={{fontWeight: 'bold', fontSize: 50, marginBottom: 30}}>Login</Text>
-                <Button rounded light onPress={() => this.handleRouteNavigationSignUp()} style={{alignSelf: 'center', width: 250,marginBottom: 20, justifyContent: 'center', alignContent: 'center'}}>
+                <Button rounded light onPress={() => navigate("SignUpScreen")} style={{alignSelf: 'center', width: 250,marginBottom: 20, justifyContent: 'center', alignContent: 'center'}}>
                 <Text style={{textAlign: 'center', color: 'green'}}>SIGN UP</Text>
               </Button>
              
-              <Button rounded onPress={() => this.handleRouteNavigationSignIn()} style={{alignSelf: 'center', width: 250,marginBottom: 30, justifyContent: 'center', alignContent: 'center'}}>
+              <Button rounded onPress={() => navigate({routeName: "LoginScreen", key: 'LoginScren1'})} style={{alignSelf: 'center', width: 250,marginBottom: 30, justifyContent: 'center', alignContent: 'center'}}>
                 <Text style={{color: 'white'}}>SIGN IN</Text>
             </Button>
             </View>
@@ -149,15 +126,15 @@ export class componentName extends Component {
   });
   
 
-
 const mapStateToProps = (state) => ({
-  
+  getLocation : state.location
 })
 
 const mapDispatchToProps = (dispatch) => ({
   postLogin_state: obj => dispatch(login_user(obj)),
-  setAllCategory: () => dispatch(getAllCategory())
-  
+  setAllCategory: () => dispatch(getAllCategory()),
+  getNearest: (lat, long) => dispatch(getNearest(lat, long)),
+  locationActions : (loc) => dispatch(LocationUser(loc))
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(componentName)

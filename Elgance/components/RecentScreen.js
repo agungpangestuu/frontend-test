@@ -1,8 +1,10 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import {Image, StyleSheet, AsyncStorage, ImageBackground, View, Alert, TouchableOpacity, Dimensions} from 'react-native';
+import {Image, StyleSheet, BackHandler, AsyncStorage, ImageBackground, View, Alert, TouchableOpacity, Dimensions} from 'react-native';
 import {Container, Header, Content, Item, Input, Icon, Button, Text, Spinner, Card, CardItem} from 'native-base';
 import axios from 'axios' 
+import { NavigationActions } from "react-navigation"
+
 
 import { getAllCategory, login_user, DetailList } from "./store/actions"
 import CardBox from "./common/Card";
@@ -15,11 +17,16 @@ export class RecentScreen extends Component {
       isLoading: true,
       data: [],
     }
+    this.handleBackButtonClick = this._handleBackButtonClick.bind(this)
   }
   componentDidMount() {
 
   }
+  _handleBackButtonClick() {
+    this.props.navigation.goBack();    
+  }
  componentWillMount() {
+  BackHandler.addEventListener('hardwareBackPress', this.handleBackButtonClick);  
   const { state } = this.props.navigation
   AsyncStorage.getItem('credential').then(result => {
     result = JSON.parse(result)
@@ -40,6 +47,10 @@ export class RecentScreen extends Component {
     console.log(err)
   })
  }
+
+ componentWillUnmount() {
+  BackHandler.removeEventListener('hardwareBackPress', this.handleBackButtonClick)
+}
 
  _handlePress(data, id) {
   this.props.setDetail(data)

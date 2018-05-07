@@ -47,6 +47,13 @@ export const Search = (data) => ({
   }
 });
 
+export const LocationUser = (data) => ({
+  type: "LOCATION_ACTION",
+  payload: {
+    data
+  }
+});
+
 export const login_user = obj => {
   return async (dispatch, getState) => {
     return new Promise((resolve, reject) => {
@@ -132,7 +139,7 @@ export const getNearest = (lat, long) => {
   return (dispatch, getState) => {
     
     return new Promise((resolve, reject) => {
-      axios.get(`http://Hapi-aja.herokuapp.com/getnearest?lat=${lat}&long=${long}`, {headers: {'Authorization': `Bearer ${getState().login.token}`}})
+      axios.get(`http://Hapi-aja.herokuapp.com/saloncategory?lat=${lat}&long=${long}`, {headers: {'Authorization': `Bearer ${getState().login.token}`}})
       .then( ({ data }) => {
         console.log('ini data getNearest',data)
         dispatch(Search(data))

@@ -7,6 +7,10 @@ const initialState = {
     billed: false,
     wallet: false
   },
+  location: {
+    lat: null,
+    long: null
+  },
   login: {
     username: '',
     alreadySign: '',
@@ -52,6 +56,11 @@ export const reducer = (state = initialState, action) => {
       return {
         ...state,
         search: action.payload.data
+      };
+      case "LOCATION_ACTION":
+      return {
+        ...state,
+        location: action.payload.data
       };
     default:
       return state;

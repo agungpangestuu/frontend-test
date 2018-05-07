@@ -81,7 +81,7 @@ class DetailScreen extends Component {
 
   handlePress(item) {
     let arg = {
-      number: this.props.detailList.salon.phone,
+      number: this.props.detailList.phone,
       prompt: false
     }
     switch (item.id) {
@@ -187,7 +187,7 @@ class DetailScreen extends Component {
     const {showAlert} = this.state;
     
     return (
-      !detailList.salon.contact ?
+      !detailList.contact ?
         (
           <Container>
             <Collapsible
@@ -195,7 +195,7 @@ class DetailScreen extends Component {
               max={150}
               backgroundColor="#000000"
               renderHeader={(
-                <ImageBackground style={styles.headerImage} source={{uri: detailList.salon.images}} resizeMode={'contain'}>
+                <ImageBackground style={styles.headerImage} source={{uri: detailList.images}} resizeMode={'contain'}>
                   <StatusBar barStyle="light-content" backgroundColor="black"/>
                   <Button style={styles.goBack} transparent onPress={() => this.props.navigation.goBack()}>
                     <Icon style={styles.iconGoBack} name="ios-arrow-round-back"/>
@@ -205,7 +205,7 @@ class DetailScreen extends Component {
               )}
               renderContent={
                 <Content style={{margin: 20, flex: 1}}>
-                  <Text style={{fontSize: 30,alignSelf: 'center', fontFamily: 'niagara', color: 'black'}}>{detailList.salon.name}</Text>
+                  <Text style={{fontSize: 30,alignSelf: 'center', fontFamily: 'niagara', color: 'black'}}>{detailList.name}</Text>
                   <Text style={{fontSize: 20,alignSelf: 'center', fontFamily: 'niagara', color: 'black'}}>serpong utara tanggerang</Text>
                   <View style={styles.displayFlex}>
                     <Text>───────── </Text>
@@ -223,7 +223,7 @@ class DetailScreen extends Component {
                   </View>
                   <View style={{ borderBottomWidth: 1.5, borderBottomColor: '#D28496', marginBottom: 20, marginTop: 20 }}/>
                   <H3>INFO</H3>
-                  <Text>{detailList.salon.branch[0].address || detailList.salon.contact}</Text>
+                  <Text>{detailList.salon.branch[0].address || detailList.contact}</Text>
                   
                   <Text></Text>
                   <View style={styles.line}/>
@@ -242,7 +242,7 @@ class DetailScreen extends Component {
               max={150}
               backgroundColor="#000000"
               renderHeader={(
-                <ImageBackground style={styles.headerImage} source={{uri: detailList.salon.images}} resizeMode={'contain'}>
+                <ImageBackground style={styles.headerImage} source={{uri: detailList.images}} resizeMode={'contain'}>
                   <StatusBar barStyle="light-content" backgroundColor="black"/>
                   <Button style={styles.goBack} transparent onPress={() => this.props.navigation.goBack()}>
                     <Icon style={styles.iconGoBack} name="ios-arrow-round-back"/>
@@ -252,7 +252,7 @@ class DetailScreen extends Component {
               )}
               renderContent={
                 <Content style={{margin: 20, flex: 1}}>
-                  <Text style={{fontSize: 30,alignSelf: 'center', fontFamily: 'niagara', color: 'black'}}>{detailList.salon.name}</Text>
+                  <Text style={{fontSize: 30,alignSelf: 'center', fontFamily: 'niagara', color: 'black'}}>{detailList.name}</Text>
                   <Text style={{fontSize: 20,alignSelf: 'center', fontFamily: 'niagara', color: 'black'}}>serpong utara tanggerang</Text>
                   <View style={styles.displayFlex}>
                     <Text>───────── </Text>
@@ -270,7 +270,7 @@ class DetailScreen extends Component {
                   </View>
                   <View style={{ borderBottomWidth: 1.5, borderBottomColor: '#D28496', marginBottom: 20, marginTop: 20 }}/>
                   <H3>INFO</H3>
-                  <Text>{detailList.salon.contact}</Text>
+                  <Text>{detailList.contact}</Text>
                   
                   <Text></Text>
                   <View style={styles.line}/>

@@ -35,17 +35,16 @@ class MainPage extends Component {
   constructor(){
     super()
     this.state = {
-      allCategory : null
+      allCategory : null,
+    
     }
     this.handleBackButtonClick = this._handleBackButtonClick.bind(this)
   }
   componentDidMount() {
-    console.log(this.props.navigation)
     StatusBarManager.setColor(processColor("#ff0000"), false);
   }
   componentWillMount() {
     BackHandler.addEventListener('hardwareBackPress', this.handleBackButtonClick);
-    
   }
   _handleBackButtonClick() {
     this.props.navigation.goBack(null);
@@ -63,8 +62,6 @@ class MainPage extends Component {
   componentWillUnmount() {
     BackHandler.removeEventListener('hardwareBackPress', this.handleBackButtonClick)
   }
-
-  component
 
   closeDrawer() {
     this._drawer._root.close()

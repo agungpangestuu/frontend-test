@@ -4,7 +4,8 @@ import { StyleSheet, AsyncStorage, ImageBackground, View, TouchableOpacity, Aler
 import { Container, Header, Left, Content, Item, Input, Icon, Button, Text, Spinner } from 'native-base';
 import { NavigationActions } from "react-navigation"
 
-import { login_user, getAllCategory } from "./store/actions"
+import { login_user, getAllCategory, getLocations, DirectLocation, getNearest } from "./store/actions"
+
 
 class Login extends Component {
     constructor() {
@@ -20,12 +21,25 @@ class Login extends Component {
     _focusNextField(nextField) {
         this.refs[nextField]._root.focus()
     }
+    componentWillMount() {
+        // navigator.geolocation.getCurrentPosition(
+        //     (position) => {
+        //         // this.props.getNearest(position.coords.latitude, position.coords.longitude)
+        //         this.setState({
+        //         latitude: position.coords.latitude,
+        //         longitude: position.coords.longitude,
+        //         });
+        //     },
+        //     (error) => this.setState({ error: error.message }),
+        //     { enableHighAccuracy: false, timeout: 200000, maximumAge: 1000 }
+        // );
+    }
     componentDidMount() {
-        this.props.setAllCategory().then(result => {
-            console.log(result)
-          }).catch(err => {
-            console.log(err)
-          })
+        // this.props.setAllCategory().then(result => {
+        //     console.log(result)
+        //   }).catch(err => {
+        //     console.log(err)
+        //   })
     }
 
     handleSubmit(e) {
@@ -38,9 +52,11 @@ class Login extends Component {
             password: this.state.password
         }
         Keyboard.dismiss()
+        
         this.props.postLogin_state(LoginEvent).then(result => {
             console.log('ini result : ',result)
-            this.props.setAllCategory().then(result => {
+              this.props.getNearest("-6.2845749", "106.6974924").then(resultData => { 
+                console.log('data all category : ', resultData)
                 const resetAction = NavigationActions.reset({
                     index: 0,
                     actions: [
@@ -49,6 +65,7 @@ class Login extends Component {
                   });
                   this.props.navigation.dispatch(resetAction);
               }).catch(err => {
+                this.setState({error: true, isLoading: false})
                 console.log(err)
               })
            
@@ -164,11 +181,14 @@ const mapStateToProps = (state) => ({
     getLogin: state.login 
   })
   
-  const mapDispatchToProps = (dispatch) => {
-    return {
+  const mapDispatchToProps = (dispatch) => ({
+
         postLogin_state: obj => dispatch(login_user(obj)),
-        setAllCategory: () => dispatch(getAllCategory())
-    }
-  };
+        setAllCategory: () => dispatch(getAllCategory()),
+        actionGetLocation: (origin, dest) => { dispatch(getLocations(origin, dest)) },
+        postDirectLocation: (data) => dispatch(DirectLocation(data)),
+        getNearest: (lat, long) => dispatch(getNearest(lat, long))
+
+  });
   
   export default connect(mapStateToProps, mapDispatchToProps)(Login)

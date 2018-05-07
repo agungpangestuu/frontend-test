@@ -7,7 +7,7 @@ import axios from 'axios'
 
 import {data} from './locationInBanten'
 import SeacrhInput from './AutoCompleteSearch';
-import { getLocations, DirectLocation, getNearest } from "./store/actions"
+import { getLocations, DirectLocation, getNearest, LocationUser } from "./store/actions"
 
 var { height, width } = Dimensions.get("window");
 
@@ -53,7 +53,8 @@ class SearchBarExample extends Component {
   }
 
   _handleOnpressDetectLocation(){
-    this.setState({isLoading: true})    
+    this.setState({isLoading: true})
+    this.props.postDirectLocation(item.text)    
     this.props.getNearest(this.state.latitude, this.state.longitude).then(result => {
       this.props.navigation.goBack()
     }).catch(err => console.log(err))
@@ -85,7 +86,7 @@ class SearchBarExample extends Component {
             </Header>
             <Content style={{backgroundColor: 'white'}}>
             
-            <SeacrhInput/>
+            <SeacrhInput locationActions={this.props.locationActions} navigate={this.props.navigation.navigate}/>
             <TouchableOpacity onPress={() => this._handleOnpressDetectLocation()}>
             <View style={styles.container}>
               <Icon name="ios-locate-outline" style={{ fontSize: 30, color: "red" }}/>
@@ -202,7 +203,8 @@ const mapStateToProps = (state) => ({
 const mapDispatchToProps = (dispatch) => ({
   actionGetLocation: (origin, dest) => { dispatch(getLocations(origin, dest)) },
   postDirectLocation: (data) => dispatch(DirectLocation(data)),
-  getNearest: (lat, long) => dispatch(getNearest(lat, long))
+  getNearest: (lat, long) => dispatch(getNearest(lat, long)),
+  locationActions : (loc) => dispatch(LocationUser(loc))   
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(SearchBarExample)

@@ -21,11 +21,31 @@ class TabScreen extends Component {
   }
   componentWillMount(){
     if(this.props.getAllCategory){
-      console.log('asuuuu')
+      console.log('asuuuu : ', this.props.getAllCategory)
       var count  = 0
       this.props.getAllCategory.forEach((element, index) => {
+        console.log('ini element : ',element.name)
         count= count + 1
-        switch (element.category) {
+        switch (element.name) {
+          case 'Hair': return this.setState({Hair: element.salons})
+            break;
+          case "Eyelashes": return this.setState({Eyelashes: element.salons})
+            break;
+          case 'Bridal': return this.setState({Bridal: element.salons})
+            break;
+          case 'Nails': return this.setState({Nails: element.salons})
+            break;
+          case 'Brow': return this.setState({Brow: element.salons})
+            break;
+        }
+      });
+    }
+    else {
+      console.log('asuuuu ')
+      var count  = 0
+      this.props.getSearch.forEach((element, index) => {
+        count= count + 1
+        switch (element.name) {
           case 'Hair': return this.setState({Hair: element.data})
             break;
           case "Eyelashes": return this.setState({Eyelashes: element.data})
@@ -42,7 +62,7 @@ class TabScreen extends Component {
     
   }
   componentDidUpdate(){
-   
+   console.log(this.state)
   }
   componentDidMount() {
       this.setState({isLoading: false})

@@ -25,7 +25,10 @@ export default class SearchBox extends Component {
         renderDescription={row => row.description} // custom description render
         onPress={(data, details = null) => {
           // 'details' is provided when fetchDetails = true
-          console.log(data, details);
+          console.log(data, details.geometry.location);
+          this.props.locationActions(details.geometry.location)
+          this.props.navigate({routeName: 'MainPage', key: 'MainPage1'})
+          
         }}
         getDefaultValue={() => ""}
         query={{
