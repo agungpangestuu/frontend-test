@@ -4,20 +4,56 @@ import { StackNavigator } from 'react-navigation'
 import { Container, Header, Content, Button, Icon, Text } from 'native-base';
 
 import store from './components/store'
+import SignScreen from './components/SignScreen'
+import LoginScreen from './components/LoginScreen'
+import SignUpScreen from './components/SignUpScreen'
 import MainPage from './components/MainPage'
 import SearchScreen from './components/SearchScreen'
-// import PickUpLocationScreen from './components/screens/PickUpLocationScreen'
+import DetailScreen from './components/DetailListScreen'
+import RecentScreen from './components/RecentScreen'
 // import CameraScreen from './components/OpenCamera'
 const Apps = StackNavigator({
   Home: {
-    screen: MainPage,
+    screen: SignScreen,
     navigationOptions: {
       header: null
+    }
+  },
+  LoginScreen: {
+    screen: LoginScreen,
+    navigationOptions: {
+      header: null
+    }
+  },
+  SignUpScreen: {
+    screen: SignUpScreen,
+    navigationOptions: {
+      header: null
+    }
+  },
+  MainPage: {
+    screen: MainPage,
+    navigationOptions : {
+      header: null 
     }
   },
   SearchScreen: {
     screen: SearchScreen,
     navigationOptions: {
+      header: null
+    }
+  },
+  DetailScreen: {
+    screen: DetailScreen,
+    navigationOptions: {
+      headerTitle: 'Episode Detail',
+      header: null
+    }
+  },
+  RecentScreen: {
+    screen: RecentScreen,
+    navigationOptions: {
+      headerTitle: 'Episode Detail',
       header: null
     }
   }

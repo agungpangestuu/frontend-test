@@ -1,40 +1,59 @@
 const initialState = {
-    base: "",
-    status: {
-      cash: true,
-      billed: false,
-      wallet: false
-    }
-  };
-  
-  export const reducer = (state = initialState, action) => {
-    switch (action.type) {
-      case "CURRENT_ACTIONS":
-        return { ...state, base: action.payload.data };
-      case "CASH_ACTIONS":
-        return {
-          ...state,
-          status: {
-            cash: true,
-            billed: false,
-            wallet: false
-          }
-        };
-      case "BILLED_ACTIONS":
-        return {
-          ...state,
-          status: {
-            cash: false,
-            billed: true,
-            wallet: false
-          }
-        };
-      case "WALLET_ACTIONS":
-        return {
-          ...state.status,
-          cash: true
-        };
-      default:
-        return state;
-    }
-  };
+  allCategory: null,
+  search: null,
+  detailList: null,
+  status: {
+    cash: true,
+    billed: false,
+    wallet: false
+  },
+  login: {
+    username: '',
+    alreadySign: '',
+    token: '',
+    fullname: '',
+    bookmark: null,
+    rescent: null,
+    id: ''
+  },
+  signUp: false,
+  mainPage: {
+    directLocation: null,
+  }
+};
+
+export const reducer = (state = initialState, action) => {
+  switch (action.type) {
+    case "SIGNUP_ACTION":
+      return { ...state, signUp: {success: true }};
+    case "DIRECTLOCATION_ACTIONS":
+      return {
+        ...state,
+        mainPage: {
+          directLocation: action.payload.data
+        }
+      };
+    case "LOGIN_ACTION":
+      return {
+        ...state,
+        login: action.payload.data
+      };
+    case "ALLCATEGORY_ACTION":
+      return {
+        ...state,
+        allCategory: action.payload.data
+      };
+    case "DETAILLIST_ACTION":
+      return {
+        ...state,
+        detailList: action.payload.data
+      };
+    case "SEARCH_ACTION":
+      return {
+        ...state,
+        search: action.payload.data
+      };
+    default:
+      return state;
+  }
+};
