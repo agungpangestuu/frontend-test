@@ -33,11 +33,11 @@ class CardImageExample extends Component {
                     <TouchableOpacity onPress={() => { this._handlePress(item, item._id) }}>
                       <Card style={{ height: 250, width: width / 3 + 15, flex: 0, flexGrow: 1 }}>
                         <CardItem cardBody style={{ backgroundColor: '#D28496' }}>
-                          <Image source={{ uri: item.images.length > 0 ? item.images : 'https://www.gumtree.com/static/1/resources/assets/rwd/images/orphans/a37b37d99e7cef805f354d47.noimage_thumbnail.png' }} style={{ height: 100, flex: 1, flexGrow: 1, width: null }} resizeMode={'contain'} />
+                          <Image source={{ uri: ( item.images && item.images.length > 0 ) ? item.images : 'https://www.gumtree.com/static/1/resources/assets/rwd/images/orphans/a37b37d99e7cef805f354d47.noimage_thumbnail.png' }} style={{ height: 100, flex: 1, flexGrow: 1, width: null }} resizeMode={'contain'} />
                         </CardItem>
                         <CardItem style={{ flex: 1, flexDirection: 'column' }}>
                           <Text style={{ textAlign: 'center', fontFamily: "niagara", marginBottom: 10 }}>{item.name}</Text>
-                          <Text style={{ textAlign: 'center', fontFamily: "niagara" }}>{item.contact}</Text>
+                          <Text style={{ textAlign: 'center', fontFamily: "niagara" }}>{item.address}</Text>
                         </CardItem>
                       </Card>
                     </TouchableOpacity>

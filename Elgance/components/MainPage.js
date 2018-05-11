@@ -14,13 +14,14 @@ import {
   Button,
   Icon,
   Text,
-  Drawer
+  Drawer,
+  Spinner
 } from "native-base";
 import { NavigationActions } from 'react-navigation'
 
 import Tabs from "./TabScreen";
 import SideBar from './SideBar';
-import {getAllCategory} from './store/actions'
+import {getAllCategory, getNearest, LocationUser} from './store/actions'
 
 var { height, width } = Dimensions.get("window");
 const { StatusBarManager } = NativeModules;
@@ -36,15 +37,37 @@ class MainPage extends Component {
     super()
     this.state = {
       allCategory : null,
-    
+      isLoading: true
     }
     this.handleBackButtonClick = this._handleBackButtonClick.bind(this)
   }
   componentDidMount() {
     StatusBarManager.setColor(processColor("#ff0000"), false);
+    console.log('muncul did')
   }
   componentWillMount() {
+    console.log('muncul will')
     BackHandler.addEventListener('hardwareBackPress', this.handleBackButtonClick);
+    console.log(this.props.getLocation)
+    this.props.getNear(this.props.getLocation.lat, this.props.getLocation.long).then(result => {
+      this.setState({isLoading: false})
+    }).catch(err => {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          let loc = {
+            lat : position.coords.latitude,
+            long : position.coords.longitude
+          }
+          this.props.locationActions(loc)
+          this.props.getNear(loc.lat, loc.long).then(result => {
+            this.setState({isLoading: false})
+          }).catch(err => console.log(err))
+
+        },
+        (error) => this.setState({ error: error.message }),
+        { enableHighAccuracy: false, timeout: 200000, maximumAge: 1000 }
+      );
+    })
   }
   _handleBackButtonClick() {
     this.props.navigation.goBack(null);
@@ -115,7 +138,14 @@ class MainPage extends Component {
             </Button>
           </Right>
         </Header>
-        <Tabs navigation={this.props.navigation} />
+        {this.state.isLoading ? (
+          <View>
+          <Spinner />
+          </View>
+        ) : (
+          <Tabs navigation={this.props.navigation} />
+        )}
+        
       </Container>
       </Drawer>
     );
@@ -125,13 +155,13 @@ class MainPage extends Component {
 const mapStateToProps = (state) => ({
   getDirect: state.mainPage.directLocation,
   getAllCategory: state.allCategory,
-  getSearch: state.search
+  getSearch: state.search,
+  getLocation: state.location
 })
 
-const mapDispatchToProps = (dispatch) => {
-  return {
-    
-  }
-};
+const mapDispatchToProps = (dispatch) => ({
+  getNear: (lat, long) => dispatch(getNearest(lat, long)),
+  locationActions : (loc) => dispatch(LocationUser(loc))  
+});
 
 export default connect(mapStateToProps, mapDispatchToProps)(MainPage)

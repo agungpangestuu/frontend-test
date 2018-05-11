@@ -184,6 +184,7 @@ class DetailScreen extends Component {
       },
     ]
     const detailList = this.props.detailList
+    console.log(detailList.service)
     const {showAlert} = this.state;
     
     return (
@@ -223,7 +224,7 @@ class DetailScreen extends Component {
                   </View>
                   <View style={{ borderBottomWidth: 1.5, borderBottomColor: '#D28496', marginBottom: 20, marginTop: 20 }}/>
                   <H3>INFO</H3>
-                  <Text>{detailList.salon.branch[0].address || detailList.contact}</Text>
+                  <Text>{detailList.address}</Text>
                   
                   <Text></Text>
                   <View style={styles.line}/>
@@ -269,13 +270,13 @@ class DetailScreen extends Component {
                     })}
                   </View>
                   <View style={{ borderBottomWidth: 1.5, borderBottomColor: '#D28496', marginBottom: 20, marginTop: 20 }}/>
+                  <H3>SERVICE</H3>
+                  <Text>{detailList.service}</Text>
                   <H3>INFO</H3>
-                  <Text>{detailList.contact}</Text>
-                  
-                  <Text></Text>
+                  <Text>{detailList.address}</Text>
                   <View style={styles.line}/>
-                  <H3>Photo</H3>
-                  
+                  <H3>SERVICE</H3>
+                  <Text>{detailList.service}</Text>
                   <View style={[styles.line,{marginTop: 30}]}/>
                   
                 </Content>

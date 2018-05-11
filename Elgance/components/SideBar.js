@@ -58,7 +58,7 @@ class SideBar extends Component {
                 this.props.navigator({
                   routeName: "RecentScreen",
                   key: "Login1",
-                  params: 'Bookmark'
+                  params: 'Bookmarked'
                 })
               }
             >

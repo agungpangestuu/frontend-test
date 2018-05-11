@@ -27,7 +27,13 @@ export default class SearchBox extends Component {
           // 'details' is provided when fetchDetails = true
           console.log(data, details.geometry.location);
           this.props.locationActions(details.geometry.location)
-          this.props.navigate({routeName: 'MainPage', key: 'MainPage1'})
+          this.props.getNearest(details.geometry.location.lat, details.geometry.location.lng).then(result => {
+            this.props.navigate({routeName: 'MainPage', key: 'MainPage1'})
+          })
+          .catch(err => {
+            console.log(err)
+          })
+          
           
         }}
         getDefaultValue={() => ""}

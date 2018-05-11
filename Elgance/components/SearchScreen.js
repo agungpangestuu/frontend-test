@@ -1,9 +1,10 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { View, Dimensions, StyleSheet, Text, TouchableOpacity } from 'react-native'
+import { View, Dimensions, StyleSheet, Text, TouchableOpacity, BackHandler } from 'react-native'
 import { TabNavigator } from "react-navigation";
 import { Container,Content, Header, Item, Input, Icon, Body, Right, Left, Button, Title, Spinner } from 'native-base';
 import axios from 'axios'
+import { NavigationActions } from "react-navigation"
 
 import {data} from './locationInBanten'
 import SeacrhInput from './AutoCompleteSearch';
@@ -42,21 +43,47 @@ class SearchBarExample extends Component {
     );
   }
 
+  componentWillMount() {
+    BackHandler.addEventListener('hardwareBackPress', this.handleBackAndroid);
+  }
+
+  _handleBackAndroid() {
+    this.props.navigation.goBack();
+    return true;
+  } 
+
+  componentWillUnmount() {
+    BackHandler.removeEventListener('hardwareBackPress', this.handleBackAndroid)
+  }
+
   _handleOnpressLocation(item) {
-    console.log('ini item ', item.long)
+    console.log('ini item ', item)
+
     this.setState({isLoading: true})
     this.props.postDirectLocation(item.text)
+    this.props.locationActions({lat: item.lat, long: item.long})
     this.props.getNearest(item.lat, item.long).then(result => {
-      this.props.navigation.goBack()
+      const resetAction = NavigationActions.reset({
+        index: 0,
+        actions: [
+          NavigationActions.navigate({ routeName: 'MainPage' }),
+        ],
+      });
+      this.props.navigation.dispatch(resetAction);
     }).catch(err => console.log(err))
-    
   }
 
   _handleOnpressDetectLocation(){
     this.setState({isLoading: true})
     this.props.postDirectLocation(item.text)    
     this.props.getNearest(this.state.latitude, this.state.longitude).then(result => {
-      this.props.navigation.goBack()
+      const resetAction = NavigationActions.reset({
+        index: 0,
+        actions: [
+          NavigationActions.navigate({ routeName: 'MainPage' }),
+        ],
+      });
+      this.props.navigation.dispatch(resetAction);
     }).catch(err => console.log(err))
   }
   
@@ -86,7 +113,7 @@ class SearchBarExample extends Component {
             </Header>
             <Content style={{backgroundColor: 'white'}}>
             
-            <SeacrhInput locationActions={this.props.locationActions} navigate={this.props.navigation.navigate}/>
+            <SeacrhInput locationActions={this.props.locationActions} navigate={this.props.navigation.navigate} getNearest={this.props.getNearest}/>
             <TouchableOpacity onPress={() => this._handleOnpressDetectLocation()}>
             <View style={styles.container}>
               <Icon name="ios-locate-outline" style={{ fontSize: 30, color: "red" }}/>

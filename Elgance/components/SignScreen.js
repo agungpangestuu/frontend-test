@@ -12,11 +12,15 @@ export class componentName extends Component {
     this.state = {
       isLoading: true,
       longitude: null,
-      latitude: null
+      latitude: null, 
+      alreadyDidMount : false,
+      alreadyWillMount: false,
     }
+    // this.handleScreen = this._handleScreen.bind(this)
+    
   }
 
-  componentDidMount() {
+  componentWillMount() {
     AsyncStorage.getItem('credential').then(result => {
       console.log(result)
       if(result){
@@ -28,13 +32,7 @@ export class componentName extends Component {
         }
         this.props.postLogin_state(obj).then(resultLogin => {
           this.props.setAllCategory().then(resultAll => {
-            const resetAction = NavigationActions.reset({
-              index: 0,
-              actions: [
-                NavigationActions.navigate({ routeName: 'MainPage' }),
-              ],
-            });
-            this.props.navigation.dispatch(resetAction);
+            this.setState({alreadyWillMount: true})
         }).catch(err => {
             console.log(err)
           })
@@ -45,29 +43,43 @@ export class componentName extends Component {
         this.setState({isLoading: false})
       }
     }).catch(err => {
-      console.log(err)
       this.setState({isLoading: false})      
     })
-    
   }
  
- componentWillMount() {
+ componentDidMount() {
   navigator.geolocation.getCurrentPosition(
     (position) => {
+      console.log('masuk sini')
       let loc = {
         lat : position.coords.latitude,
         long : position.coords.longitude
       }
       this.props.locationActions(loc)
+      this.setState({alreadyDidMount: true})      
     },
-    (error) => this.setState({ error: error.message }),
-    { enableHighAccuracy: false, timeout: 200000, maximumAge: 1000 }
+    (error) => {
+      this.setState({ error: error.message })
+      console.log(error)
+    },
+    { enableHighAccuracy: false, timeout: 200000, maximumAge: 0 }
   );
  }
- 
+ componentDidUpdate() {
+   if(this.state.alreadyDidMount && this.state.alreadyWillMount) {
+    const resetAction = NavigationActions.reset({
+      index: 0,
+      actions: [
+        NavigationActions.navigate({ routeName: 'MainPage' }),
+      ],
+    });
+    this.props.navigation.dispatch(resetAction);
+   }
+ }
+
   render() {
       const { navigate } = this.props.navigation
-
+      console.log(this.state)
       { if (!this.state.isLoading) {
         return (
           <View  style={styles.backgroundImage}>

@@ -20,11 +20,10 @@ class TabScreen extends Component {
     }
   }
   componentWillMount(){
-    if(this.props.getAllCategory){
-      console.log('asuuuu : ', this.props.getAllCategory)
+    if(this.props.getSearch){
+      console.log('asuuuu ', this.props.getSearch)
       var count  = 0
-      this.props.getAllCategory.forEach((element, index) => {
-        console.log('ini element : ',element.name)
+      this.props.getSearch.forEach((element, index) => {
         count= count + 1
         switch (element.name) {
           case 'Hair': return this.setState({Hair: element.salons})
@@ -41,20 +40,20 @@ class TabScreen extends Component {
       });
     }
     else {
-      console.log('asuuuu ')
+      console.log('asuuuu : ', this.props.getAllCategory)
       var count  = 0
-      this.props.getSearch.forEach((element, index) => {
+      this.props.getAllCategory.forEach((element, index) => {
         count= count + 1
         switch (element.name) {
-          case 'Hair': return this.setState({Hair: element.data})
+          case 'Hair': return this.setState({Hair: element.salons})
             break;
-          case "Eyelashes": return this.setState({Eyelashes: element.data})
+          case "Eyelashes": return this.setState({Eyelashes: element.salons})
             break;
-          case 'Bridal': return this.setState({Bridal: element.data})
+          case 'Bridal': return this.setState({Bridal: element.salons})
             break;
-          case 'Nails': return this.setState({Nails: element.data})
+          case 'Nails': return this.setState({Nails: element.salons})
             break;
-          case 'Brow': return this.setState({Brow: element.data})
+          case 'Brow': return this.setState({Brow: element.salons})
             break;
         }
       });
