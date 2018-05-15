@@ -13,6 +13,7 @@ const initialState = {
   },
   login: {
     username: '',
+    create: '',
     alreadySign: '',
     token: '',
     fullname: '',

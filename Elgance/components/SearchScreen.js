@@ -24,8 +24,10 @@ class SearchBarExample extends Component {
       isLoading: true,
       loadingPress: false
     }
+    this.handleBackAndroid = this._handleBackAndroid.bind(this)
   }
   componentDidMount(){
+    console.log(this.props)
     navigator.geolocation.getCurrentPosition(
       (position) => {
         console.log(position)
@@ -48,7 +50,7 @@ class SearchBarExample extends Component {
   }
 
   _handleBackAndroid() {
-    this.props.navigation.goBack();
+    this.props.navigation.goBack()
     return true;
   } 
 

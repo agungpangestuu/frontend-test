@@ -11,6 +11,7 @@ import MainPage from './components/MainPage'
 import SearchScreen from './components/SearchScreen'
 import DetailScreen from './components/DetailListScreen'
 import RecentScreen from './components/RecentScreen'
+import ProfileScreen from './components/ProfileScreen'
 // import CameraScreen from './components/OpenCamera'
 const Apps = StackNavigator({
   Home: {
@@ -46,14 +47,18 @@ const Apps = StackNavigator({
   DetailScreen: {
     screen: DetailScreen,
     navigationOptions: {
-      headerTitle: 'Episode Detail',
       header: null
     }
   },
   RecentScreen: {
     screen: RecentScreen,
     navigationOptions: {
-      headerTitle: 'Episode Detail',
+      header: null
+    }
+  },
+  ProfileScreen : {
+    screen: ProfileScreen,
+    navigationOptions: {
       header: null
     }
   }

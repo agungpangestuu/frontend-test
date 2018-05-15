@@ -19,12 +19,14 @@ export class RecentScreen extends Component {
     }
     this.handleBackButtonClick = this._handleBackButtonClick.bind(this)
   }
-  componentDidMount() {
 
-  }
+
   _handleBackButtonClick() {
-    this.props.navigation.goBack();    
-  }
+    this.props.navigation.goBack()
+    return true;
+  } 
+
+
  componentWillMount() {
   BackHandler.addEventListener('hardwareBackPress', this.handleBackButtonClick);  
   const { state } = this.props.navigation

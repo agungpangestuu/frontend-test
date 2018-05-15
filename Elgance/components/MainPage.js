@@ -93,12 +93,22 @@ class MainPage extends Component {
     this._drawer._root.open()
   };
 
+  handleSearch() {
+    const resetAction = NavigationActions.reset({
+      index: 0,
+      actions: [
+        NavigationActions.navigate({ routeName: 'MainPage' }),
+      ],
+    });
+    this.props.navigation.dispatch(resetAction);
+  }
+
   render() {
     const { navigate } = this.props.navigation;
     return (
       <Drawer
         ref={(ref) => { this._drawer = ref; }}
-        content={<SideBar navigator={ navigate } dispatch={this.props.navigation.dispatch} closeDrawer={this.closeDrawer} />}
+        content={<SideBar navigator={ navigate } dispatch={this.props.navigation.dispatch} closeDrawer={this._drawer} />}
         onClose={() => this.closeDrawer()} >
 
       <Container>
@@ -139,8 +149,8 @@ class MainPage extends Component {
           </Right>
         </Header>
         {this.state.isLoading ? (
-          <View>
-          <Spinner />
+          <View style={{flex: 1,alignContent: 'center', justifyContent: 'center', alignItems: 'center'}}>
+            <Spinner color="blue" style={{alignSelf: 'center'}}/>
           </View>
         ) : (
           <Tabs navigation={this.props.navigation} />

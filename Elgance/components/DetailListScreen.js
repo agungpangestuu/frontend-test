@@ -2,10 +2,11 @@ import React, {Component} from 'react';
 import {connect} from 'react-redux'
 import {ActivityIndicator,AsyncStorage, TouchableOpacity, ImageBackground, StatusBar, StyleSheet, Text, View, BackHandler, Alert} from 'react-native';
 import Call from 'react-native-phone-call'
-import {Button, Container, Content, H3, Badge, Icon} from 'native-base'
+import {Button, Container, Content, H3, Badge, Icon, Spinner} from 'native-base'
 import ImagePicker from 'react-native-image-picker'
 import Collapsible from 'react-native-collapsible-header'
 import AwesomeAlert from 'react-native-awesome-alerts';
+import axios from 'axios'
 // import {fetch_one_episode} from '../stores/episodeAction'
 import {postBookmark, postRecent} from './store/actions'
 
@@ -16,7 +17,10 @@ class DetailScreen extends Component {
       bookmark: false,
       beenHere: false,
       showAlert: false,
-      itemId: 0
+      itemId: 0,
+      distric: null,
+      isLoading: true,
+      rate: null
     }
     this.handleBackAndroid = this._handleBackAndroid.bind(this)
   }
@@ -32,25 +36,34 @@ class DetailScreen extends Component {
     } else if (beenHere.length > 0) {
       this.setState({beenHere: true})
     }
+
+    if(this.props.detailList.review.length > 0 ) {
+
+    }
+    else {
+      this.setState({rate: '0.0'})
+    }
   }
 
   componentWillMount() {
     BackHandler.addEventListener('hardwareBackPress', this.handleBackAndroid);
-    const { state } = this.props.navigation
-    // AsyncStorage.getItem('credential').then(result => {
-    //   result = JSON.parse(result)
-    //   let objUser = {
-    //     username: result.username,
-    //     password: result.password
-    //   }
-      
-    //   this.props.postLogin_state(objUser).then(sukses => {
-    //     console.log()
-    //   }).catch(err => console.log(err))
+    const { location } = this.props.detailList
 
-    // }).catch(err => {
-    //   console.log(err)
-    // })
+    axios.get(`https://maps.googleapis.com/maps/api/geocode/json?latlng=${location.coordinates[1]},${location.coordinates[0]}&sensor=false&key=AIzaSyAjWOHPrXscmVtlGBYIsi6ZrvF8ZYydteI`)
+      .then(({data}) => {
+        console.log(data)
+        data.results.forEach(item => {
+          console.log(item.types.includes("administrative_area_level_2"))
+          if(item.types.includes("administrative_area_level_2") || item.types.includes("administrative_area_level_3")){
+            console.log('masuk')
+            this.setState({
+              distric: item.formatted_address,
+              isLoading: false
+            })
+          }
+        })
+      })
+      .catch(err => console.log(err))
   }
 
   _handleBackAndroid() {
@@ -64,7 +77,6 @@ class DetailScreen extends Component {
 
   handleBookmark() {
     const {state} = this.props.navigation
-    console.log(state)
     if(this.state.bookmark) {
       this.setState({bookmark: false}, this.props.bookmarkPost(this.props.getData.id, state.params)) 
     } else {
@@ -187,8 +199,8 @@ class DetailScreen extends Component {
     console.log(detailList.service)
     const {showAlert} = this.state;
     
-    return (
-      !detailList.contact ?
+    return (!this.state.isLoading && this.state.distric ? (
+      !detailList.address ?
         (
           <Container>
             <Collapsible
@@ -207,15 +219,15 @@ class DetailScreen extends Component {
               renderContent={
                 <Content style={{margin: 20, flex: 1}}>
                   <Text style={{fontSize: 30,alignSelf: 'center', fontFamily: 'niagara', color: 'black'}}>{detailList.name}</Text>
-                  <Text style={{fontSize: 20,alignSelf: 'center', fontFamily: 'niagara', color: 'black'}}>serpong utara tanggerang</Text>
+                  <Text style={{fontSize: 20,alignSelf: 'center', fontFamily: 'niagara', color: 'black', marginBottom: 10}}>{this.state.distric}</Text>
                   <View style={styles.displayFlex}>
                     <Text>───────── </Text>
                     <Badge style={{ backgroundColor: '#D28496', alignItems: 'center', justifyContent: 'center' }}>
-                      <Text style={{ color: 'white',alignSelf: 'center' }}>3.0</Text>
+                      <Text style={{ color: 'white',alignSelf: 'center' }}>{this.state.rate}</Text>
                     </Badge>
                     <Text> ─────────</Text>
                   </View>
-                  <View style={styles.displayFlex}>
+                  <View style={[styles.displayFlex, {marginTop: 10}]}>
                     {dataButton.map(item => {
                       return (
                         this.renderIcon(item)
@@ -228,8 +240,8 @@ class DetailScreen extends Component {
                   
                   <Text></Text>
                   <View style={styles.line}/>
-                  <H3>Photo</H3>
-                  
+                  <H3>SERVICE</H3>
+                  <Text>{detailList.service}</Text>
                   <View style={[styles.line,{marginTop: 30}]}/>
                   
                 </Content>
@@ -254,15 +266,15 @@ class DetailScreen extends Component {
               renderContent={
                 <Content style={{margin: 20, flex: 1}}>
                   <Text style={{fontSize: 30,alignSelf: 'center', fontFamily: 'niagara', color: 'black'}}>{detailList.name}</Text>
-                  <Text style={{fontSize: 20,alignSelf: 'center', fontFamily: 'niagara', color: 'black'}}>serpong utara tanggerang</Text>
+                  <Text style={{fontSize: 20,alignSelf: 'center', fontFamily: 'niagara', color: 'black', marginBottom: 10}}>{this.state.distric}</Text>
                   <View style={styles.displayFlex}>
                     <Text>───────── </Text>
                     <Badge style={{ backgroundColor: '#D28496', alignItems: 'center', justifyContent: 'center' }}>
-                      <Text style={{ color: 'white',alignSelf: 'center' }}>3.0</Text>
+                      <Text style={{ color: 'white',alignSelf: 'center' }}>{this.state.rate}</Text>
                     </Badge>
                     <Text> ─────────</Text>
                   </View>
-                  <View style={styles.displayFlex}>
+                  <View style={[styles.displayFlex, {marginTop: 10}]}>
                     {dataButton.map(item => {
                       return (
                         this.renderIcon(item)
@@ -270,8 +282,6 @@ class DetailScreen extends Component {
                     })}
                   </View>
                   <View style={{ borderBottomWidth: 1.5, borderBottomColor: '#D28496', marginBottom: 20, marginTop: 20 }}/>
-                  <H3>SERVICE</H3>
-                  <Text>{detailList.service}</Text>
                   <H3>INFO</H3>
                   <Text>{detailList.address}</Text>
                   <View style={styles.line}/>
@@ -303,6 +313,11 @@ class DetailScreen extends Component {
             />
           </Container>
         )
+      ) : (
+        <View style={{flex: 1,alignContent: 'center', justifyContent: 'center', alignItems: 'center'}}>
+          <Spinner color="blue" style={{alignSelf: 'center'}}/>
+        </View>
+      )
     )
   }
 }

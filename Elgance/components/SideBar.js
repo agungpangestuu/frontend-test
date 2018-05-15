@@ -42,11 +42,13 @@ class SideBar extends Component {
           </ListItem>
           <ListItem>
             <TouchableOpacity
-              onPress={() =>
-                this.props.navigator({
-                  routeName: "SearchScreen",
-                  key: "Login1"
-                })
+              onPress={() => {
+                  this.props.closeDrawer._root.close()
+                  this.props.navigator({
+                    routeName: "ProfileScreen",
+                    key: "ProfileScreen1"
+                  })
+                }
               }
             >
               <Text>Profile</Text>
@@ -54,12 +56,14 @@ class SideBar extends Component {
           </ListItem>
           <ListItem>
             <TouchableOpacity
-              onPress={() =>
-                this.props.navigator({
-                  routeName: "RecentScreen",
-                  key: "Login1",
-                  params: 'Bookmarked'
-                })
+              onPress={() => {
+                  this.props.closeDrawer._root.close()
+                  this.props.navigator({
+                    routeName: "RecentScreen",
+                    key: "Login1",
+                    params: 'Bookmarked'
+                  })
+                }
               }
             >
               <Text>Bookmark</Text>
@@ -67,19 +71,21 @@ class SideBar extends Component {
           </ListItem>
           <ListItem>
             <TouchableOpacity
-              onPress={() =>
-                this.props.navigator({
-                  routeName: "RecentScreen",
-                  key: "Login2",
-                  params: 'Recent Salon'
-                })
+              onPress={() => {
+                  this.props.closeDrawer._root.close()                
+                  this.props.navigator({
+                    routeName: "RecentScreen",
+                    key: "Login2",
+                    params: 'Recent Salon'
+                  })
+                }
               }
             >
               <Text>Recent Salon</Text>
             </TouchableOpacity>
           </ListItem>
           <ListItem
-            onPress={() =>
+            onPress={() =>              
               this.handleLogoutButton()
             }
           >
