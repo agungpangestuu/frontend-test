@@ -1,9 +1,22 @@
 import React, { Component } from 'react';
-import { View } from 'react-native'
+import { View, BackHandler } from 'react-native'
 import { connect } from 'react-redux';
 import { Container,Thumbnail, Header, Content, List, ListItem, Text, Icon, Left, Body, Right, Switch, Separator } from 'native-base';
 
 class ProfileScreen extends Component {
+  _handleBackButtonClick() {
+    this.props.navigation.goBack()
+    return true;
+  } 
+
+  componentWillMount() {
+    BackHandler.addEventListener('hardwareBackPress', this.handleBackButtonClick);  
+  }
+
+  componentWillUnmount() {
+    BackHandler.removeEventListener('hardwareBackPress', this.handleBackButtonClick)
+  }
+
   render() {
     return (
       <Container>

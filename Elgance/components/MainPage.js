@@ -43,32 +43,23 @@ class MainPage extends Component {
   }
   componentDidMount() {
     StatusBarManager.setColor(processColor("#ff0000"), false);
-    console.log('muncul did')
+    // this.props.setAllCategory().then(resultAll => {
+    //   console.log(resultAll)
+    // }).catch(err => {
+    //     console.log(err)
+    //   })
+    // console.log('muncul did')
   }
   componentWillMount() {
     console.log('muncul will')
+    
     BackHandler.addEventListener('hardwareBackPress', this.handleBackButtonClick);
-    console.log(this.props.getLocation)
-    this.props.getNear(this.props.getLocation.lat, this.props.getLocation.long).then(result => {
-      this.setState({isLoading: false})
-    }).catch(err => {
-      navigator.geolocation.getCurrentPosition(
-        (position) => {
-          let loc = {
-            lat : position.coords.latitude,
-            long : position.coords.longitude
-          }
-          this.props.locationActions(loc)
-          this.props.getNear(loc.lat, loc.long).then(result => {
-            this.setState({isLoading: false})
-          }).catch(err => console.log(err))
 
-        },
-        (error) => this.setState({ error: error.message }),
-        { enableHighAccuracy: false, timeout: 200000, maximumAge: 1000 }
-      );
-    })
+    if(this.props.getSearch) {
+      this.setState({isLoading: false})
+    }
   }
+
   _handleBackButtonClick() {
     this.props.navigation.goBack(null);
     Alert.alert(
@@ -148,7 +139,7 @@ class MainPage extends Component {
             </Button>
           </Right>
         </Header>
-        {this.state.isLoading ? (
+        {(this.state.isLoading && this.props.getSearch) ? (
           <View style={{flex: 1,alignContent: 'center', justifyContent: 'center', alignItems: 'center'}}>
             <Spinner color="blue" style={{alignSelf: 'center'}}/>
           </View>
@@ -171,6 +162,7 @@ const mapStateToProps = (state) => ({
 
 const mapDispatchToProps = (dispatch) => ({
   getNear: (lat, long) => dispatch(getNearest(lat, long)),
+  setAllCategory: () => dispatch(getAllCategory()),
   locationActions : (loc) => dispatch(LocationUser(loc))  
 });
 

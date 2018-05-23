@@ -22,7 +22,6 @@ export class componentName extends Component {
 
   componentWillMount() {
     AsyncStorage.getItem('credential').then(result => {
-      console.log(result)
       if(result){
         const { navigate } = this.props.navigation
         const credential = JSON.parse(result)
@@ -31,11 +30,8 @@ export class componentName extends Component {
           password: credential.password
         }
         this.props.postLogin_state(obj).then(resultLogin => {
-          this.props.setAllCategory().then(resultAll => {
-            this.setState({alreadyWillMount: true})
-        }).catch(err => {
-            console.log(err)
-          })
+          console.log(resultLogin)
+          this.setState({alreadyWillMount: true})
         }).catch(err => console.log(err))
         
       } else {
@@ -62,18 +58,23 @@ export class componentName extends Component {
       this.setState({ error: error.message })
       console.log(error)
     },
-    { enableHighAccuracy: false, timeout: 200000, maximumAge: 0 }
+    { enableHighAccuracy: false, timeout: 20000, maximumAge: 0 }
   );
  }
  componentDidUpdate() {
    if(this.state.alreadyDidMount && this.state.alreadyWillMount) {
-    const resetAction = NavigationActions.reset({
+
+    this.props.getNearest(this.props.getLocation.lat, this.props.getLocation.long).then(result => {
+     console.log(result)
+     const resetAction = NavigationActions.reset({
       index: 0,
       actions: [
         NavigationActions.navigate({ routeName: 'MainPage' }),
       ],
     });
     this.props.navigation.dispatch(resetAction);
+    }).catch(err => console.log(err))
+   
    }
  }
 
@@ -139,7 +140,7 @@ export class componentName extends Component {
   
 
 const mapStateToProps = (state) => ({
-  getLocation : state.location
+  getLocation : state.location,
 })
 
 const mapDispatchToProps = (dispatch) => ({

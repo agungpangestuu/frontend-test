@@ -1,14 +1,16 @@
 import React, {Component} from 'react';
 import {connect} from 'react-redux'
-import {ActivityIndicator,AsyncStorage, TouchableOpacity, ImageBackground, StatusBar, StyleSheet, Text, View, BackHandler, Alert} from 'react-native';
+import {ActivityIndicator,Dimensions, Modal, AsyncStorage, TouchableOpacity, ImageBackground, StatusBar, StyleSheet, Text, View, BackHandler, Alert, TouchableHighlight} from 'react-native';
 import Call from 'react-native-phone-call'
-import {Button, Container, Content, H3, Badge, Icon, Spinner} from 'native-base'
+import {Button, Container, Content, H3, Badge, Icon, Spinner, Item, Input} from 'native-base'
 import ImagePicker from 'react-native-image-picker'
 import Collapsible from 'react-native-collapsible-header'
 import AwesomeAlert from 'react-native-awesome-alerts';
 import axios from 'axios'
 // import {fetch_one_episode} from '../stores/episodeAction'
 import {postBookmark, postRecent} from './store/actions'
+
+var { height, width } = Dimensions.get("window");
 
 class DetailScreen extends Component {
   constructor(props) {
@@ -20,7 +22,9 @@ class DetailScreen extends Component {
       itemId: 0,
       distric: null,
       isLoading: true,
-      rate: null
+      modalVisible: false,
+      rate: null,
+      star: false
     }
     this.handleBackAndroid = this._handleBackAndroid.bind(this)
   }
@@ -91,14 +95,28 @@ class DetailScreen extends Component {
 
   }
 
+  setModalVisible(visible) {
+    this.setState({modalVisible: visible});
+  }
+
   handlePress(item) {
     let arg = {
       number: this.props.detailList.phone,
       prompt: false
     }
     switch (item.id) {
-      case 1:Call(arg).catch(console.error)
-
+      case 1: arg.number ? Call(arg).catch(console.error) : (
+        Alert.alert(
+          'Mohon maaf',
+          'kami tidak menyediakan nomor untuk salon ini ',
+          [
+            {text: 'OK', onPress: () => BackHandler.exitApp() },
+          ],
+          { cancelable: false }
+        )
+      )
+        break;
+      case 2: this.setModalVisible(true)
         break;
       case 3: Alert.alert(
         '',
@@ -311,6 +329,36 @@ class DetailScreen extends Component {
                 this.hideAlert(true);
               }}
             />
+
+            {/* modal*/}
+              <Modal
+                animationType="slide"
+                transparent={false}
+                visible={this.state.modalVisible}
+                onRequestClose={() => {
+                  alert('Modal has been closed.');
+                }}>
+                <View style={{marginTop: 22}}>
+                  <View>
+                    <Text>Hello World!</Text>
+                    <TouchableOpacity onPress={() => this.setState({star: true})} style={{width: width/5, height: 70}}>
+                    <Icon active name='star' style={(this.state.star ? {color: 'yellow', width: width/5, height: 40, fontSize:40, textAlign: 'center'} : { textAlign: 'center',color: 'black',width: width/5, height: 40, fontSize:40})}/>
+                    </TouchableOpacity>
+                    
+                    <Item>
+                      <Input placeholder="Underline Textbox" />
+                    </Item>
+                    <TouchableOpacity
+                      onPress={() => {
+                        this.setModalVisible(!this.state.modalVisible);
+                      }}>
+                      <Text>Hide Modal</Text>
+                    </TouchableOpacity>
+                  </View>
+                </View>
+              </Modal>
+            {/* end modal */}
+
           </Container>
         )
       ) : (

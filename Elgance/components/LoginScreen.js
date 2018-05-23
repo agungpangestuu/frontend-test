@@ -52,11 +52,9 @@ class Login extends Component {
             password: this.state.password
         }
         Keyboard.dismiss()
-        
+        console.log(LoginEvent)
         this.props.postLogin_state(LoginEvent).then(result => {
-            console.log('ini result : ',result)
-              this.props.getNearest("-6.2845749", "106.6974924").then(resultData => { 
-                console.log('data all category : ', resultData)
+              this.props.getNearest(this.props.getLocation.lat, this.props.getLocation.long).then(resultData => { 
                 const resetAction = NavigationActions.reset({
                     index: 0,
                     actions: [
@@ -70,6 +68,7 @@ class Login extends Component {
               })
            
         }).catch(err => {
+            console.log(err)
             this.setState({error: true, isLoading: false},
             Keyboard.dismiss())
             Alert.alert('UserName or Password Wrong ...')
@@ -111,7 +110,7 @@ class Login extends Component {
                     >
                         <Text style={{ fontWeight: 'bold', fontSize: 50, marginBottom: 30 }}>Login</Text>
 
-                        <Item error={this.state.error ? true : false} style={this.state.error ? styles.error : { marginLeft: 35, marginRight: 35, marginBottom: 20, borderBottomColor: 'black', borderBottomWidth: 2 }}>
+                        <Item error={this.state.error} style={this.state.error ? styles.error : { marginLeft: 35, marginRight: 35, marginBottom: 20, borderBottomColor: 'black', borderBottomWidth: 2 }}>
                             <Icon active name="ios-contact" />
                             <Input placeholder="Username"
                                 ref="username"
@@ -178,7 +177,8 @@ const styles = StyleSheet.create({
 });
 
 const mapStateToProps = (state) => ({
-    getLogin: state.login 
+    getLogin: state.login,
+    getLocation: state.location 
   })
   
   const mapDispatchToProps = (dispatch) => ({

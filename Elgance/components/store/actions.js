@@ -55,6 +55,7 @@ export const LocationUser = (data) => ({
 });
 
 export const login_user = obj => {
+  console.log('ini obj : ',obj)
   return async (dispatch, getState) => {
     return new Promise((resolve, reject) => {
       axios
@@ -137,11 +138,9 @@ export const getAllCategory = () => {
 
 export const getNearest = (lat, long) => {
   return (dispatch, getState) => {
-    
     return new Promise((resolve, reject) => {
       axios.get(`http://Hapi-aja.herokuapp.com/saloncategory?lat=${lat}&long=${long}`, {headers: {'Authorization': `Bearer ${getState().login.token}`}})
       .then( ({ data }) => {
-        console.log('ini data getNearest',data)
         dispatch(Search(data))
         resolve(data)
       })

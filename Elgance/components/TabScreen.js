@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import PropTypes from "prop-types";
 import { View, Dimensions } from "react-native";
-import { Tabs, Tab, Text, Content, Spinner } from "native-base";
+import { Tabs, Tab, Text, Content, Spinner, Container } from "native-base";
 import { connect } from "react-redux"
 
 import CardBox from "./common/CardsTab";
@@ -19,9 +19,9 @@ class TabScreen extends Component {
       isloading: true
     }
   }
-  componentWillMount(){
+  componentDidMount(){
+    console.log('ini get search',this.props.getSearch)
     if(this.props.getSearch){
-      console.log('asuuuu ', this.props.getSearch)
       var count  = 0
       this.props.getSearch.forEach((element, index) => {
         count= count + 1
@@ -37,40 +37,17 @@ class TabScreen extends Component {
           case 'Brow': return this.setState({Brow: element.salons})
             break;
         }
-      });
+      }
+    );
+      if(count === this.props.getSearch.length) {
+        this.setState({isLoading: false})
+      }
     }
-    else {
-      console.log('asuuuu : ', this.props.getAllCategory)
-      var count  = 0
-      this.props.getAllCategory.forEach((element, index) => {
-        count= count + 1
-        switch (element.name) {
-          case 'Hair': return this.setState({Hair: element.salons})
-            break;
-          case "Eyelashes": return this.setState({Eyelashes: element.salons})
-            break;
-          case 'Bridal': return this.setState({Bridal: element.salons})
-            break;
-          case 'Nails': return this.setState({Nails: element.salons})
-            break;
-          case 'Brow': return this.setState({Brow: element.salons})
-            break;
-        }
-      });
-    }
-    
   }
   componentDidUpdate(){
    console.log(this.state)
   }
-  componentDidMount() {
-      this.setState({isLoading: false})
-  }
   
-  _handleAllCategory(category) {
-
-  }
-
   render() {
     { if(!this.state.isLoading) {
       return (
