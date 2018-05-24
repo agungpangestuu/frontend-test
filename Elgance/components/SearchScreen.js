@@ -6,7 +6,7 @@ import { Container,Content, Header, Item, Input, Icon, Body, Right, Left, Button
 import axios from 'axios'
 import { NavigationActions } from "react-navigation"
 
-import {data} from './locationInBanten'
+import {locationInBanten} from './locationInBanten'
 import SeacrhInput from './AutoCompleteSearch';
 import { getLocations, DirectLocation, getNearest, LocationUser } from "./store/actions"
 
@@ -27,25 +27,49 @@ class SearchBarExample extends Component {
     this.handleBackAndroid = this._handleBackAndroid.bind(this)
   }
   componentDidMount(){
-    console.log(this.props)
-    navigator.geolocation.getCurrentPosition(
-      (position) => {
-        console.log(position)
-        let locat = data(position)
-        this.setState({
-          latitude: position.coords.latitude,
-          longitude: position.coords.longitude,
-          error: null,
-          distance: locat,
-          isLoading: false
-        });
-      },
-      (error) => this.setState({ error: error.message }),
-      { enableHighAccuracy: false, timeout: 200000, maximumAge: 1000 }
-    );
+    var count = 0
+    locationInBanten.forEach( (item, index) => {
+        count = count + 1
+        let origin = {
+            lat: this.state.latitude || this.props.getLocation.lat,
+            long: this.state.longitude || this.props.getLocation.long
+          }
+          let dest = {
+            lat: item.lat,
+            long: item.long
+          }
+          axios.get(`https://maps.googleapis.com/maps/api/distancematrix/json?units=metric&origins=${origin.lat},${origin.long}&destinations=${dest.lat},${dest.long}&key=AIzaSyAjWOHPrXscmVtlGBYIsi6ZrvF8ZYydteI`)
+          .then(({data}) => {
+            console.log(data)
+            item.locat = data.rows[0].elements[0].distance.text
+          })
+          .catch(err => console.log(err))
+    })
+    if (count === locationInBanten.length) {
+      this.setState({
+        error: null,
+        distance: locationInBanten,
+        isLoading: false
+      });
+    }
+
+    
   }
 
   componentWillMount() {
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        this.setState({
+          latitude: this.props.getLocation.lat,
+          longitude: this.props.getLocation.long,
+        });      
+      },
+      (error) => {
+        this.setState({ error: error.message })
+        console.log(error)
+      },
+      { enableHighAccuracy: false, timeout: 50000, maximumAge: 1000 }
+    );
     BackHandler.addEventListener('hardwareBackPress', this.handleBackAndroid);
   }
 
@@ -77,7 +101,16 @@ class SearchBarExample extends Component {
 
   _handleOnpressDetectLocation(){
     this.setState({isLoading: true})
-    this.props.postDirectLocation(item.text)    
+    axios.get(`https://maps.googleapis.com/maps/api/geocode/json?latlng=${this.state.latitude},${this.state.longitude}&sensor=false&key=AIzaSyAjWOHPrXscmVtlGBYIsi6ZrvF8ZYydteI`)
+    .then(({data}) => {
+      data.results.forEach(item => {
+        if(item.types.includes("administrative_area_level_2") || item.types.includes("administrative_area_level_3")){
+          this.props.postDirectLocation(item.formatted_address) 
+        }
+      })
+    })
+    .catch(err => console.log(err))   
+   
     this.props.getNearest(this.state.latitude, this.state.longitude).then(result => {
       const resetAction = NavigationActions.reset({
         index: 0,
@@ -87,6 +120,7 @@ class SearchBarExample extends Component {
       });
       this.props.navigation.dispatch(resetAction);
     }).catch(err => console.log(err))
+    
   }
   
   render() {
@@ -96,19 +130,25 @@ class SearchBarExample extends Component {
           <Container>
             <Header hasTabs
               androidStatusBarColor="#D28496"
-              style={{ backgroundColor: "#D28496" }}
+              style={{ backgroundColor: "#D28496", marginLeft: 0}}
             >
               <Left>
-                <Button transparent onPress={() => this.props.navigation.goBack()}>
-                  <Icon name="ios-close" style={{ fontSize: 30, color: "white" }} />
+                <Button transparent IconLeft IconRight onPress={() => this.props.navigation.goBack()}>
+                  <Icon name="ios-close" style={{ marginLeft: 10, fontSize: 30, color: "white", }} />
                 </Button>
               </Left>
               <Body
                 style={{
-                  justifyContent: "center"
+                  justifyContent: "center",
+                  alignContent: "center",
+                  alignItems: "center",
+                  flex:1,
+                  flexGrow: 2,
+                  flexShrink: 1,
+                  marginRight: 30
                 }}
               >
-                <Title style={{ marginLeft: 20,fontFamily: "niagara"}}>Select Location</Title>
+                <Title style={{ fontFamily: "niagara", fontSize: 30}}>Select Location</Title>
                 
               </Body>
               
@@ -117,10 +157,10 @@ class SearchBarExample extends Component {
             
             <SeacrhInput locationActions={this.props.locationActions} navigate={this.props.navigation.navigate} getNearest={this.props.getNearest}/>
             <TouchableOpacity onPress={() => this._handleOnpressDetectLocation()}>
-            <View style={styles.container}>
-              <Icon name="ios-locate-outline" style={{ fontSize: 30, color: "red" }}/>
-              <Text style={styles.title}> Detect my location</Text>
-            </View>
+              <View style={styles.container}>
+                <Icon name="ios-locate-outline" style={{ fontSize: 30, color: "red" }}/>
+                <Text style={styles.title}> Detect my location</Text>
+              </View>
             </TouchableOpacity>
             <View style={{marginTop: 20}}>
               <Text style={styles.headerLocation}>Location In Banten</Text>
@@ -128,7 +168,7 @@ class SearchBarExample extends Component {
             <View style={{flex: 1, flexDirection: 'row', marginLeft: 10, marginRight: 10, flexWrap: "wrap"}}>
             {this.state.distance.map(item => {
               return ( 
-                <TouchableOpacity onPress={() => this._handleOnpressLocation(item)}>
+                <TouchableOpacity onPress={(item) => this._handleOnpressLocation(item)}>
                 <View style={styles.location}>
                   <Text>{item.text}</Text>
                   <Text>{item.locat}</Text>
@@ -226,7 +266,7 @@ const styles = StyleSheet.create({
 });
 
 const mapStateToProps = (state) => ({
-  
+  getLocation: state.location
 })
 
 const mapDispatchToProps = (dispatch) => ({

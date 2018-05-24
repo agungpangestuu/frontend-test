@@ -40,24 +40,18 @@ class MainPage extends Component {
       isLoading: true
     }
     this.handleBackButtonClick = this._handleBackButtonClick.bind(this)
+    this.closeDrawer = this._closeDrawer.bind(this)
   }
   componentDidMount() {
     StatusBarManager.setColor(processColor("#ff0000"), false);
-    // this.props.setAllCategory().then(resultAll => {
-    //   console.log(resultAll)
-    // }).catch(err => {
-    //     console.log(err)
-    //   })
-    // console.log('muncul did')
+    this.props.setAllCategory().then(resultAll => {
+      this.setState({isLoading: false})
+    }).catch(err => {
+        console.log(err)
+      })
   }
   componentWillMount() {
-    console.log('muncul will')
-    
     BackHandler.addEventListener('hardwareBackPress', this.handleBackButtonClick);
-
-    if(this.props.getSearch) {
-      this.setState({isLoading: false})
-    }
   }
 
   _handleBackButtonClick() {
@@ -77,18 +71,18 @@ class MainPage extends Component {
     BackHandler.removeEventListener('hardwareBackPress', this.handleBackButtonClick)
   }
 
-  closeDrawer() {
+  _closeDrawer() {
     this._drawer._root.close()
   };
   openDrawer() {
     this._drawer._root.open()
   };
 
-  handleSearch() {
+  handleRoute(pushRoute) {
     const resetAction = NavigationActions.reset({
       index: 0,
       actions: [
-        NavigationActions.navigate({ routeName: 'MainPage' }),
+        NavigationActions.navigate({ routeName: pushRoute}),
       ],
     });
     this.props.navigation.dispatch(resetAction);
@@ -99,8 +93,8 @@ class MainPage extends Component {
     return (
       <Drawer
         ref={(ref) => { this._drawer = ref; }}
-        content={<SideBar navigator={ navigate } dispatch={this.props.navigation.dispatch} closeDrawer={this._drawer} />}
-        onClose={() => this.closeDrawer()} >
+        content={<SideBar navigator={ navigate } dispatch={this.props.navigation.dispatch} closeDrawer={this.closeDrawer} />}
+        onClose={() => this._closeDrawer()} >
 
       <Container>
         <Header
@@ -125,7 +119,7 @@ class MainPage extends Component {
               <Icon name="ios-pin" style={{ fontSize: 30, color: "white" }} />
             </Button>
             <Title style={{ fontFamily: "niagara" }}>{this.props.getDirect ? this.props.getDirect : 'Select Location'}</Title>
-            <Button transparent>
+            <Button transparent onPress={() => navigate({routeName: "SearchScreen", key: 'screenSearch1'})}>
               <Icon
                 name="ios-arrow-down-outline"
                 style={{ fontSize: 30, color: "white" }}

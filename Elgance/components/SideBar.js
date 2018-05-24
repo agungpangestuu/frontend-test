@@ -43,7 +43,7 @@ class SideBar extends Component {
           <ListItem>
             <TouchableOpacity
               onPress={() => {
-                  this.props.closeDrawer._root.close()
+                  this.props.closeDrawer()
                   this.props.navigator({
                     routeName: "ProfileScreen",
                     key: "ProfileScreen1"
@@ -57,7 +57,7 @@ class SideBar extends Component {
           <ListItem>
             <TouchableOpacity
               onPress={() => {
-                  this.props.closeDrawer._root.close()
+                  this.props.closeDrawer()
                   this.props.navigator({
                     routeName: "RecentScreen",
                     key: "Login1",
@@ -72,7 +72,7 @@ class SideBar extends Component {
           <ListItem>
             <TouchableOpacity
               onPress={() => {
-                  this.props.closeDrawer._root.close()                
+                  this.props.closeDrawer()                
                   this.props.navigator({
                     routeName: "RecentScreen",
                     key: "Login2",

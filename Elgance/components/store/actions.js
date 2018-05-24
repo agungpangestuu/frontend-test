@@ -55,7 +55,6 @@ export const LocationUser = (data) => ({
 });
 
 export const login_user = obj => {
-  console.log('ini obj : ',obj)
   return async (dispatch, getState) => {
     return new Promise((resolve, reject) => {
       axios
@@ -70,13 +69,13 @@ export const login_user = obj => {
             recent: data.recent,
             id: data._id
           }
-          console.log('ini data login: ', data)
           AsyncStorage.setItem("credential", JSON.stringify(objLogin))
             .then(result => {
+               console.log('ini data login: ', result)
               dispatch(LoginAction(objLogin));
               resolve(objLogin);
             })
-            .catch(err => {});
+            .catch(err => console.log(err));
         })
         .catch(err => {
           console.log(err);
@@ -125,7 +124,7 @@ export const getAllCategory = () => {
       axios.get(`http://Hapi-aja.herokuapp.com/saloncategory`, {headers: {'Authorization': `Bearer ${getState().login.token}`}})
       .then( ({ data }) => {
         console.log('ini data all category',data)
-        dispatch(AllCategory(data))
+        dispatch(Search(data))
         resolve(data)
       })
       .catch(err => {

@@ -1,7 +1,7 @@
 import axios from 'axios'
 
 
-var locationInBanten = [
+export var locationInBanten = [
     {
       id: 1,
       distance: "5 km",
@@ -128,6 +128,7 @@ export function data(position) {
           .catch(err => console.log(err))
         // if (count === locationInBanten.length) return locationInBanten
     })
+    console.log(locationInBanten)
     return locationInBanten
 }
  

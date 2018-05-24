@@ -30,7 +30,7 @@ class TabScreen extends Component {
             break;
           case "Eyelashes": return this.setState({Eyelashes: element.salons})
             break;
-          case 'Bridal': return this.setState({Bridal: element.salons})
+          case 'Bridal and Spa' || 'Bridal': return this.setState({Bridal: element.salons})
             break;
           case 'Nails': return this.setState({Nails: element.salons})
             break;
@@ -78,7 +78,7 @@ class TabScreen extends Component {
             
           </Tab>
           <Tab
-            heading="BRIDAL"
+            heading="BRIDAL AND SPA"
             style={{ backgroundColor: "#E7B3BF", flex: 1,}}
             tabStyle={{ backgroundColor: "#E7B3BF" }}
             activeTabStyle={{ backgroundColor: "#E7B3BF" }}

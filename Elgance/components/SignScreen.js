@@ -58,14 +58,14 @@ export class componentName extends Component {
       this.setState({ error: error.message })
       console.log(error)
     },
-    { enableHighAccuracy: false, timeout: 20000, maximumAge: 0 }
+    { enableHighAccuracy: false, timeout: 50000, maximumAge: 1000 }
   );
  }
  componentDidUpdate() {
    if(this.state.alreadyDidMount && this.state.alreadyWillMount) {
 
-    this.props.getNearest(this.props.getLocation.lat, this.props.getLocation.long).then(result => {
-     console.log(result)
+    // this.props.getNearest(this.props.getLocation.lat, this.props.getLocation.long).then(result => {
+    //  console.log(result)
      const resetAction = NavigationActions.reset({
       index: 0,
       actions: [
@@ -73,7 +73,7 @@ export class componentName extends Component {
       ],
     });
     this.props.navigation.dispatch(resetAction);
-    }).catch(err => console.log(err))
+    // }).catch(err => console.log(err))
    
    }
  }
