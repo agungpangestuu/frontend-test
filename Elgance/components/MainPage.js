@@ -44,11 +44,11 @@ class MainPage extends Component {
   }
   componentDidMount() {
     StatusBarManager.setColor(processColor("#ff0000"), false);
-    this.props.setAllCategory().then(resultAll => {
+    // this.props.setAllCategory().then(resultAll => {
       this.setState({isLoading: false})
-    }).catch(err => {
-        console.log(err)
-      })
+    // }).catch(err => {
+    //     console.log(err)
+    //   })
   }
   componentWillMount() {
     BackHandler.addEventListener('hardwareBackPress', this.handleBackButtonClick);

@@ -52,8 +52,8 @@ class DetailScreen extends Component {
   componentWillMount() {
     BackHandler.addEventListener('hardwareBackPress', this.handleBackAndroid);
     const { location } = this.props.detailList
-
-    axios.get(`https://maps.googleapis.com/maps/api/geocode/json?latlng=${location.coordinates[1]},${location.coordinates[0]}&sensor=false&key=AIzaSyAjWOHPrXscmVtlGBYIsi6ZrvF8ZYydteI`)
+    // if (location && location.hasOwnProperty('coordinates')) {
+      axios.get(`https://maps.googleapis.com/maps/api/geocode/json?latlng=${(location && location.hasOwnProperty('coordinates')) ? location.coordinates[1] : this.props.getLocation.lat},${(location && location.hasOwnProperty('coordinates')) ? location.coordinates[0] : this.props.getLocation.long}&sensor=false&key=AIzaSyAjWOHPrXscmVtlGBYIsi6ZrvF8ZYydteI`)
       .then(({data}) => {
         console.log(data)
         data.results.forEach(item => {
@@ -67,7 +67,20 @@ class DetailScreen extends Component {
           }
         })
       })
-      .catch(err => console.log(err))
+      .catch(err => {
+        this.setState({
+          distric: '',
+          isLoading: false
+        })
+        console.log(err)
+      })
+    // }
+    // else {
+    //   this.setState({
+    //     distric: '',
+    //     isLoading: false
+    //   })
+    // }
   }
 
   _handleBackAndroid() {
@@ -214,7 +227,6 @@ class DetailScreen extends Component {
       },
     ]
     const detailList = this.props.detailList
-    console.log(detailList.service)
     const {showAlert} = this.state;
     
     return (!this.state.isLoading && this.state.distric ? (
@@ -432,7 +444,8 @@ const styles = StyleSheet.create({
 const mapStateToProps = (state) => ({
   // episode: state.episodeReducer.episode
   detailList: state.detailList,
-  getData: state.login
+  getData: state.login,
+  getLocation: state.location
 })
 
 const mapDispatchToProps = (dispatch) => ({

@@ -22,17 +22,20 @@ class SearchBarExample extends Component {
       error:null,
       distance: null,
       isLoading: true,
-      loadingPress: false
+      loadingPress: false,
+      did: false,
+      will: false
     }
     this.handleBackAndroid = this._handleBackAndroid.bind(this)
+    this.handleLoading = this._handleLoading.bind(this)
   }
   componentDidMount(){
     var count = 0
     locationInBanten.forEach( (item, index) => {
         count = count + 1
         let origin = {
-            lat: this.state.latitude || this.props.getLocation.lat,
-            long: this.state.longitude || this.props.getLocation.long
+            lat: this.state.latitude,
+            long: this.state.longitude 
           }
           let dest = {
             lat: item.lat,
@@ -49,7 +52,8 @@ class SearchBarExample extends Component {
       this.setState({
         error: null,
         distance: locationInBanten,
-        isLoading: false
+        isLoading: false,
+        did : true
       });
     }
 
@@ -60,9 +64,11 @@ class SearchBarExample extends Component {
     navigator.geolocation.getCurrentPosition(
       (position) => {
         this.setState({
-          latitude: this.props.getLocation.lat,
-          longitude: this.props.getLocation.long,
-        });      
+          latitude: position.coords.latitude,
+          longitude: position.coords.longitude,
+          will: true
+        });
+        console.log(this.state)
       },
       (error) => {
         this.setState({ error: error.message })
@@ -87,7 +93,7 @@ class SearchBarExample extends Component {
 
     this.setState({isLoading: true})
     this.props.postDirectLocation(item.text)
-    this.props.locationActions({lat: item.lat, long: item.long})
+    // this.props.locationActions({lat: item.lat, long: item.long})
     this.props.getNearest(item.lat, item.long).then(result => {
       const resetAction = NavigationActions.reset({
         index: 0,
@@ -96,7 +102,7 @@ class SearchBarExample extends Component {
         ],
       });
       this.props.navigation.dispatch(resetAction);
-    }).catch(err => console.log(err))
+    }).catch(err => this.setState({isLoading: true}))
   }
 
   _handleOnpressDetectLocation(){
@@ -122,10 +128,13 @@ class SearchBarExample extends Component {
     }).catch(err => console.log(err))
     
   }
+  _handleLoading() {
+    return !this.state.isLoading && this.state.did && this.state.will
+  }
   
   render() {
     { 
-      if (!this.state.isLoading) {
+      if (this.handleLoading()) {
         return (
           <Container>
             <Header hasTabs

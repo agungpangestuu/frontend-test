@@ -31,7 +31,13 @@ export class componentName extends Component {
         }
         this.props.postLogin_state(obj).then(resultLogin => {
           console.log(resultLogin)
-          this.setState({alreadyWillMount: true})
+          this.props.setAllCategory().then(resultAll => {
+            this.setState({alreadyWillMount: true})
+          })
+          .catch(err => {
+            console.log(err)
+          })
+          
         }).catch(err => console.log(err))
         
       } else {
