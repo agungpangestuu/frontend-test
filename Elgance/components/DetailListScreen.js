@@ -3,6 +3,7 @@ import {connect} from 'react-redux'
 import {ActivityIndicator,Dimensions, Modal, AsyncStorage, TouchableOpacity, ImageBackground, StatusBar, StyleSheet, Text, View, BackHandler, Alert, TouchableHighlight} from 'react-native';
 import Call from 'react-native-phone-call'
 import {Button, Container, Content, H3, Badge, Icon, Spinner, Item, Input} from 'native-base'
+import {Rating} from 'react-native-elements'
 import Collapsible from 'react-native-collapsible-header'
 import axios from 'axios'
 // import {fetch_one_episode} from '../stores/episodeAction'
@@ -62,7 +63,6 @@ class DetailScreen extends Component {
     BackHandler.addEventListener('hardwareBackPress', this.handleBackAndroid);
     
     // if (location && location.hasOwnProperty('coordinates')) {
-      console.log(this.state)
       axios.get(`https://maps.googleapis.com/maps/api/geocode/json?latlng=${this.state.lat},${this.state.long}&key=AIzaSyAjWOHPrXscmVtlGBYIsi6ZrvF8ZYydteI`)
       .then(({data}) => {
         console.log(data)
@@ -205,7 +205,9 @@ class DetailScreen extends Component {
     }
   }
 
-  
+  ratingCompleted(rating) {
+    console.log("Rating is: " + rating)
+  }
 
   render() {
     const ep = {
@@ -267,11 +269,11 @@ class DetailScreen extends Component {
                   <Text style={{fontSize: 30,alignSelf: 'center', fontFamily: 'niagara', color: 'black'}}>{detailList.name}</Text>
                   <Text style={{fontSize: 20,alignSelf: 'center', fontFamily: 'niagara', color: 'black', marginBottom: 10}}>{this.state.distric}</Text>
                   <View style={styles.displayFlex}>
-                    <Text>───────── </Text>
-                    <Badge style={{ backgroundColor: '#D28496', alignItems: 'center', justifyContent: 'center' }}>
-                      <Text style={{ color: 'white',alignSelf: 'center' }}>{this.state.rate}</Text>
-                    </Badge>
-                    <Text> ─────────</Text>
+                  <Rating
+                    imageSize={20}
+                    readonly
+                    startingValue={rating}
+                  />
                   </View>
                   <View style={[styles.displayFlex, {marginTop: 10}]}>
                     {dataButton.map(item => {
@@ -350,10 +352,11 @@ class DetailScreen extends Component {
                 <View style={{marginTop: 22}}>
                   <View>
                     <Text>Hello World!</Text>
-                    <TouchableOpacity onPress={() => this.setState({star: true})} style={{width: width/5, height: 70}}>
-                    <Icon active name='star' style={(this.state.star ? {color: 'yellow', width: width/5, height: 40, fontSize:40, textAlign: 'center'} : { textAlign: 'center',color: 'black',width: width/5, height: 40, fontSize:40})}/>
-                    </TouchableOpacity>
-                    
+                    <Rating
+                      showRating
+                      onFinishRating={this.ratingCompleted}
+                      style={{ paddingVertical: 10 }}
+                    />
                     <Item>
                       <Input placeholder="Underline Textbox" />
                     </Item>
