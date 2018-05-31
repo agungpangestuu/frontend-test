@@ -4,6 +4,11 @@ import { connect } from 'react-redux';
 import { Container,Thumbnail, Header, Content, List, ListItem, Text, Icon, Left, Body, Right, Switch, Separator } from 'native-base';
 
 class ProfileScreen extends Component {
+  constructor(props) {
+    super()
+    this.handleBackButtonClick = this._handleBackButtonClick.bind(this)
+  }
+
   _handleBackButtonClick() {
     this.props.navigation.goBack()
     return true;

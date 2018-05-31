@@ -54,7 +54,7 @@ class Login extends Component {
         Keyboard.dismiss()
         console.log(LoginEvent)
         this.props.postLogin_state(LoginEvent).then(result => {
-              this.props.getNearest(this.props.getLocation.lat, this.props.getLocation.long).then(resultData => { 
+              this.props.setAllCategory().then(resultData => { 
                 const resetAction = NavigationActions.reset({
                     index: 0,
                     actions: [

@@ -3,9 +3,7 @@ import {connect} from 'react-redux'
 import {ActivityIndicator,Dimensions, Modal, AsyncStorage, TouchableOpacity, ImageBackground, StatusBar, StyleSheet, Text, View, BackHandler, Alert, TouchableHighlight} from 'react-native';
 import Call from 'react-native-phone-call'
 import {Button, Container, Content, H3, Badge, Icon, Spinner, Item, Input} from 'native-base'
-import ImagePicker from 'react-native-image-picker'
 import Collapsible from 'react-native-collapsible-header'
-import AwesomeAlert from 'react-native-awesome-alerts';
 import axios from 'axios'
 // import {fetch_one_episode} from '../stores/episodeAction'
 import {postBookmark, postRecent} from './store/actions'
@@ -24,14 +22,25 @@ class DetailScreen extends Component {
       isLoading: true,
       modalVisible: false,
       rate: null,
-      star: false
+      star: false,
+      lat: null,
+      long: null
     }
     this.handleBackAndroid = this._handleBackAndroid.bind(this)
   }
-  componentDidMount() {
+  componentWillMount() {
     let {params} = this.props.navigation.state
     // this.props.fetchOne(params.id)
     console.log('ini detail props list ',this.props)
+
+    const { location } = this.props.detailList
+
+    if(location && location.hasOwnProperty('coordinates')){
+      this.setState({lat: location.coordinates[1], long: location.coordinates[0]})
+    }
+    else{
+      this.setState({lat: this.props.getLocation.lat, long: this.props.getLocation.long})
+    }
     let bookmark = this.props.getData.bookmark.filter(item => item.salon._id === params)
     let beenHere = this.props.getData.recent.filter(element => element.salon._id === params)
 
@@ -49,19 +58,26 @@ class DetailScreen extends Component {
     }
   }
 
-  componentWillMount() {
+  componentDidMount() {
     BackHandler.addEventListener('hardwareBackPress', this.handleBackAndroid);
-    const { location } = this.props.detailList
+    
     // if (location && location.hasOwnProperty('coordinates')) {
-      axios.get(`https://maps.googleapis.com/maps/api/geocode/json?latlng=${(location && location.hasOwnProperty('coordinates')) ? location.coordinates[1] : this.props.getLocation.lat},${(location && location.hasOwnProperty('coordinates')) ? location.coordinates[0] : this.props.getLocation.long}&sensor=false&key=AIzaSyAjWOHPrXscmVtlGBYIsi6ZrvF8ZYydteI`)
+      console.log(this.state)
+      axios.get(`https://maps.googleapis.com/maps/api/geocode/json?latlng=${this.state.lat},${this.state.long}&key=AIzaSyAjWOHPrXscmVtlGBYIsi6ZrvF8ZYydteI`)
       .then(({data}) => {
         console.log(data)
         data.results.forEach(item => {
-          console.log(item.types.includes("administrative_area_level_2"))
+          console.log(item.types)
           if(item.types.includes("administrative_area_level_2") || item.types.includes("administrative_area_level_3")){
             console.log('masuk')
             this.setState({
               distric: item.formatted_address,
+              isLoading: false
+            })
+          }
+          else {
+            this.setState({
+              distric: '',
               isLoading: false
             })
           }
@@ -229,7 +245,7 @@ class DetailScreen extends Component {
     const detailList = this.props.detailList
     const {showAlert} = this.state;
     
-    return (!this.state.isLoading && this.state.distric ? (
+    return (!this.state.isLoading && this.state.distric != null ? (
       !detailList.address ?
         (
           <Container>
@@ -321,25 +337,6 @@ class DetailScreen extends Component {
                   
                 </Content>
               }
-            />
-            <AwesomeAlert
-              show={showAlert}
-              showProgress={false}
-              title="AwesomeAlert"
-              message="I have a message for you!"
-              closeOnTouchOutside={true}
-              closeOnHardwareBackPress={false}
-              showCancelButton={true}
-              showConfirmButton={true}
-              cancelText="No, cancel"
-              confirmText="Yes, delete it"
-              confirmButtonColor="#DD6B55"
-              onCancelPressed={() => {
-                this.hideAlert(false);
-              }}
-              onConfirmPressed={() => {
-                this.hideAlert(true);
-              }}
             />
 
             {/* modal*/}

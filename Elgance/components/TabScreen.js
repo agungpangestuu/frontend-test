@@ -30,7 +30,7 @@ class TabScreen extends Component {
             break;
           case "Eyelashes": return this.setState({Eyelashes: element.salons})
             break;
-          case 'Bridal and Spa' || 'Bridal': return this.setState({Bridal: element.salons})
+          case 'Bridal And Spa' || 'Bridal': return this.setState({Bridal: element.salons})
             break;
           case 'Nails': return this.setState({Nails: element.salons})
             break;

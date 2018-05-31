@@ -41,6 +41,7 @@ class SearchBarExample extends Component {
             lat: item.lat,
             long: item.long
           }
+          
           axios.get(`https://maps.googleapis.com/maps/api/distancematrix/json?units=metric&origins=${origin.lat},${origin.long}&destinations=${dest.lat},${dest.long}&key=AIzaSyAjWOHPrXscmVtlGBYIsi6ZrvF8ZYydteI`)
           .then(({data}) => {
             console.log(data)
@@ -95,6 +96,8 @@ class SearchBarExample extends Component {
     this.props.postDirectLocation(item.text)
     // this.props.locationActions({lat: item.lat, long: item.long})
     this.props.getNearest(item.lat, item.long).then(result => {
+
+      console.log(result)
       const resetAction = NavigationActions.reset({
         index: 0,
         actions: [
@@ -177,10 +180,10 @@ class SearchBarExample extends Component {
             <View style={{flex: 1, flexDirection: 'row', marginLeft: 10, marginRight: 10, flexWrap: "wrap"}}>
             {this.state.distance.map(item => {
               return ( 
-                <TouchableOpacity onPress={(item) => this._handleOnpressLocation(item)}>
+                <TouchableOpacity onPress={() => this._handleOnpressLocation(item)}>
                 <View style={styles.location}>
                   <Text>{item.text}</Text>
-                  <Text>{item.locat}</Text>
+                  <Text>{(item.locat) ? item.locat : '' }</Text>
                 </View>
                 </TouchableOpacity>
               )
