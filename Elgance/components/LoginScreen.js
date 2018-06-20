@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { StyleSheet, AsyncStorage, ImageBackground, View, TouchableOpacity, Alert, Keyboard } from 'react-native';
-import { Container, Header, Left, Content, Item, Input, Icon, Button, Text, Spinner } from 'native-base';
+import { StyleSheet, View, Alert, Keyboard } from 'react-native';
+import { Item, Input, Icon, Button, Text, Spinner } from 'native-base';
 import { NavigationActions } from "react-navigation"
 
 import { login_user, getAllCategory, getLocations, DirectLocation, getNearest } from "./store/actions"
@@ -78,7 +78,7 @@ class Login extends Component {
 
     handleLoadingAfterSubmit() {
             return (
-                  <Spinner color="blue" style={{alignSelf: 'center'}}/>
+                <Spinner color="blue" style={{alignSelf: 'center'}}/>
               )
     }
     handleNotLoadingAfterSubmit(){

@@ -1,15 +1,18 @@
 import React, {Component} from 'react';
 import {connect} from 'react-redux'
-import {ActivityIndicator,Dimensions, Modal, AsyncStorage, TouchableOpacity, ImageBackground, StatusBar, StyleSheet, Text, View, BackHandler, Alert, TouchableHighlight} from 'react-native';
+import {Modal, AsyncStorage, TouchableOpacity, ImageBackground, StatusBar, StyleSheet, Text, View, BackHandler, Alert, TouchableHighlight} from 'react-native';
 import Call from 'react-native-phone-call'
-import {Button, Container, Content, H3, Badge, Icon, Spinner, Item, Input} from 'native-base'
+import {Button, Container, Content, H3, Badge, Icon, Item, Input} from 'native-base'
+import {CirclesLoader, TextLoader} from 'react-native-indicator'
 import {Rating} from 'react-native-elements'
 import Collapsible from 'react-native-collapsible-header'
 import axios from 'axios'
+import { AirbnbRating } from "react-native-ratings";
+
 // import {fetch_one_episode} from '../stores/episodeAction'
 import {postBookmark, postRecent} from './store/actions'
 
-var { height, width } = Dimensions.get("window");
+// var { height, width } = Dimensions.get("window");
 
 class DetailScreen extends Component {
   constructor(props) {
@@ -343,19 +346,21 @@ class DetailScreen extends Component {
 
             {/* modal*/}
               <Modal
-                animationType="slide"
-                transparent={false}
+                animationType="fade"
+                transparent={true}
                 visible={this.state.modalVisible}
+                presentationStyle={'formSheet'}
                 onRequestClose={() => {
                   alert('Modal has been closed.');
                 }}>
-                <View style={{marginTop: 22}}>
+                <View style={{flex:1,marginTop: 22}}>
                   <View>
                     <Text>Hello World!</Text>
-                    <Rating
-                      showRating
-                      onFinishRating={this.ratingCompleted}
-                      style={{ paddingVertical: 10 }}
+                    <AirbnbRating
+                      count={5}
+                      reviews={["Bad", "OK", "Good", "Very Good","Amazing"]}
+                      defaultRating={5}
+                      size={50}
                     />
                     <Item>
                       <Input placeholder="Underline Textbox" />
@@ -375,7 +380,8 @@ class DetailScreen extends Component {
         )
       ) : (
         <View style={{flex: 1,alignContent: 'center', justifyContent: 'center', alignItems: 'center'}}>
-          <Spinner color="blue" style={{alignSelf: 'center'}}/>
+          <CirclesLoader color='#D28496' />
+          <TextLoader text="Loading" />
         </View>
       )
     )

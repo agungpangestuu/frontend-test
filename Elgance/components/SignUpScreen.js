@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { StyleSheet, ImageBackground, View, TouchableOpacity, Alert } from 'react-native';
-import { Container, Header, Left, Content, Item, Input, Icon, Button, Text, Spinner } from 'native-base';
+import { StyleSheet, View, Alert } from 'react-native';
+import { Item, Input, Icon, Button, Text, Spinner } from 'native-base';
 import { NavigationActions } from "react-navigation"
 
 import { signup_user } from "./store/actions"

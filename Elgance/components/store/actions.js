@@ -20,7 +20,7 @@ export const DirectLocation = (data) => ({
 });
 
 export const isLoading = data => ({
-  type: "IS_LOADING",
+  type: "ISLOADING",
   payload: {
     data
   }

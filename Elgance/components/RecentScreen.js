@@ -1,9 +1,10 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import {Image, StyleSheet, BackHandler, AsyncStorage, ImageBackground, View, Alert, TouchableOpacity, Dimensions} from 'react-native';
-import {Container, Header, Content, Item, Input, Icon, Button, Text, Spinner, Card, CardItem} from 'native-base';
-import axios from 'axios' 
-import { NavigationActions } from "react-navigation"
+import {Container, Header, Content, Item, Input, Icon, Button, Text, Card, CardItem} from 'native-base';
+import {CirclesLoader, TextLoader} from 'react-native-indicator'
+// import axios from 'axios' 
+// import { NavigationActions } from "react-navigation"
 
 
 import { getAllCategory, login_user, DetailList } from "./store/actions"
@@ -96,7 +97,8 @@ export class RecentScreen extends Component {
       }else {
         return (
           <View style={{flex: 1,alignContent: 'center', justifyContent: 'center', alignItems: 'center'}}>
-            <Spinner color="blue" style={{alignSelf: 'center'}}/>
+            <CirclesLoader color='#D28496' />
+            <TextLoader text="Loading" />
           </View>
         )
       }

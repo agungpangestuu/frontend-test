@@ -15,9 +15,9 @@ import {
   Icon,
   Text,
   Drawer,
-  Spinner
 } from "native-base";
 import { NavigationActions } from 'react-navigation'
+import {CirclesLoader, TextLoader} from 'react-native-indicator'
 
 import Tabs from "./TabScreen";
 import SideBar from './SideBar';
@@ -90,6 +90,7 @@ class MainPage extends Component {
 
   render() {
     const { navigate } = this.props.navigation;
+    StatusBarManager.setColor(processColor("#ff0000"), false);
     return (
       <Drawer
         ref={(ref) => { this._drawer = ref; }}
@@ -135,7 +136,8 @@ class MainPage extends Component {
         </Header>
         {(this.state.isLoading && this.props.getSearch) ? (
           <View style={{flex: 1,alignContent: 'center', justifyContent: 'center', alignItems: 'center'}}>
-            <Spinner color="blue" style={{alignSelf: 'center'}}/>
+            <CirclesLoader color='#D28496' />
+            <TextLoader text="Loading" />
           </View>
         ) : (
           <Tabs navigation={this.props.navigation} />

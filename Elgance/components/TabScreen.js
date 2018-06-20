@@ -1,8 +1,8 @@
 import React, { Component } from "react";
-import PropTypes from "prop-types";
-import { View, Dimensions } from "react-native";
-import { Tabs, Tab, Text, Content, Spinner, Container } from "native-base";
+import { Dimensions } from "react-native";
+import { Tabs, Tab, Content, Container } from "native-base";
 import { connect } from "react-redux"
+import {CirclesLoader, TextLoader} from 'react-native-indicator'
 
 import CardBox from "./common/CardsTab";
 var { height, width } = Dimensions.get("window");
@@ -119,7 +119,8 @@ class TabScreen extends Component {
       return (
         <Container style={{flex: 1,alignContent: 'center', justifyContent: 'center',}}>
           <Content>
-            <Spinner color="blue" style={{alignSelf: 'center'}}/>
+            <CirclesLoader color='#D28496' />
+            <TextLoader text="Loading" />
           </Content>
         </Container>
       )

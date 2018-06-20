@@ -1,16 +1,18 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { View, Dimensions, StyleSheet, Text, TouchableOpacity, BackHandler } from 'react-native'
-import { TabNavigator } from "react-navigation";
-import { Container,Content, Header, Item, Input, Icon, Body, Right, Left, Button, Title, Spinner } from 'native-base';
+import { View, Dimensions, StyleSheet, Text, TouchableOpacity, BackHandler, NativeModules, processColor } from 'react-native'
+// import { TabNavigator } from "react-navigation";
+import { Container,Content, Header, Item, Input, Icon, Body, Right, Left, Button, Title } from 'native-base';
+import {CirclesLoader, TextLoader} from 'react-native-indicator'
 import axios from 'axios'
 import { NavigationActions } from "react-navigation"
 
 import {locationInBanten} from './locationInBanten'
 import SeacrhInput from './AutoCompleteSearch';
-import { getLocations, DirectLocation, getNearest, LocationUser } from "./store/actions"
+import { getLocations, DirectLocation, getNearest, LocationUser, isLoading } from "./store/actions"
 
 var { height, width } = Dimensions.get("window");
+const { StatusBarManager } = NativeModules;
 
 class SearchBarExample extends Component {
   constructor(props){
@@ -29,9 +31,10 @@ class SearchBarExample extends Component {
     this.handleBackAndroid = this._handleBackAndroid.bind(this)
     this.handleLoading = this._handleLoading.bind(this)
   }
-  componentDidMount(){
+  _getLocationInBanten(){
     var count = 0
-    locationInBanten.forEach( (item, index) => {
+    var result = []
+    locationInBanten.forEach(async (item, index) => {
         count = count + 1
         let origin = {
             lat: this.state.latitude,
@@ -42,26 +45,50 @@ class SearchBarExample extends Component {
             long: item.long
           }
           
-          axios.get(`https://maps.googleapis.com/maps/api/distancematrix/json?units=metric&origins=${origin.lat},${origin.long}&destinations=${dest.lat},${dest.long}&key=AIzaSyAjWOHPrXscmVtlGBYIsi6ZrvF8ZYydteI`)
-          .then(({data}) => {
-            console.log(data)
-            item.locat = data.rows[0].elements[0].distance.text
-          })
-          .catch(err => console.log(err))
+          console.log('ini orgin : ', origin)
+          console.log('ini dest : ', dest)
+          try {
+            let fetch = await axios.get(`https://maps.googleapis.com/maps/api/distancematrix/json?units=metric&origins=${origin.lat},${origin.long}&destinations=${dest.lat},${dest.long}&key=AIzaSyAjWOHPrXscmVtlGBYIsi6ZrvF8ZYydteI`)
+            // console.log('ini fetch : ',fetch)
+            item.locat = fetch.data.rows[0].elements[0].distance.text
+            return result.push(item)
+          }
+          catch(err){
+            console.log(err)
+          }
     })
     if (count === locationInBanten.length) {
-      this.setState({
-        error: null,
-        distance: locationInBanten,
-        isLoading: false,
-        did : true
-      });
+      console.log('masuk')
+      setTimeout(() => {
+        this.setState({
+          error: null,
+          distance: result,
+          isLoading: false,
+        });
+      }, 1000);
+      
+      console.log('ini location in banten : ', result)
+      console.log(this.state)
+      if(this.state.distance) {
+        this.setState({did: true})
+      }
     }
+  }
 
-    
+  // componentDidUpdate() {
+  //   console.log('update')
+  //   console.log(this.state)
+  //   if(this.state.longitude && this.state.latitude && !this.state.distance) {
+  //     console.log('masuk')
+  //     this._getLocationInBanten()
+  //   }
+  // }
+  _setLocationSucces() {
+    this.setState({did: true}) 
   }
 
   componentWillMount() {
+    StatusBarManager.setColor(processColor("#ff0000"), false);
     navigator.geolocation.getCurrentPosition(
       (position) => {
         this.setState({
@@ -69,13 +96,14 @@ class SearchBarExample extends Component {
           longitude: position.coords.longitude,
           will: true
         });
+        this._getLocationInBanten()
         console.log(this.state)
       },
       (error) => {
         this.setState({ error: error.message })
         console.log(error)
       },
-      { enableHighAccuracy: false, timeout: 50000, maximumAge: 1000 }
+      { enableHighAccuracy: true, timeout: 5000}
     );
     BackHandler.addEventListener('hardwareBackPress', this.handleBackAndroid);
   }
@@ -132,12 +160,13 @@ class SearchBarExample extends Component {
     
   }
   _handleLoading() {
+    console.log(!this.state.isLoading && this.state.did && this.state.will)
     return !this.state.isLoading && this.state.did && this.state.will
   }
   
   render() {
     { 
-      if (this.handleLoading()) {
+      if (!this.state.isLoading && this.state.distance.length > 0 && this.state.will) {
         return (
           <Container>
             <Header hasTabs
@@ -167,7 +196,7 @@ class SearchBarExample extends Component {
             </Header>
             <Content style={{backgroundColor: 'white'}}>
             
-            <SeacrhInput locationActions={this.props.locationActions} navigate={this.props.navigation.navigate} getNearest={this.props.getNearest}/>
+            <SeacrhInput locationActions={this.props.locationActions} loadingAction={this.props.loadingAction}  postDirectLocation={this.props.postDirectLocation} navigate={this.props.navigation.navigate} getNearest={this.props.getNearest}/>
             <TouchableOpacity onPress={() => this._handleOnpressDetectLocation()}>
               <View style={styles.container}>
                 <Icon name="ios-locate-outline" style={{ fontSize: 30, color: "red" }}/>
@@ -179,11 +208,12 @@ class SearchBarExample extends Component {
             </View>
             <View style={{flex: 1, flexDirection: 'row', marginLeft: 10, marginRight: 10, flexWrap: "wrap"}}>
             {this.state.distance.map(item => {
+              console.log('ini item : ',item)
               return ( 
                 <TouchableOpacity onPress={() => this._handleOnpressLocation(item)}>
                 <View style={styles.location}>
                   <Text>{item.text}</Text>
-                  <Text>{(item.locat) ? item.locat : '' }</Text>
+                  <Text>{item.locat}</Text>
                 </View>
                 </TouchableOpacity>
               )
@@ -191,6 +221,7 @@ class SearchBarExample extends Component {
               
             </View>
             <View style={{flex: 1, marginTop: 30}}>
+
               <Text style={styles.headerLocation}>Recent Locations</Text>
               <View style={{flex: 1,flexDirection: 'row',marginTop: 10 }}>
                 <Icon name="ios-pin" style={{alignSelf: 'center',marginLeft: 25, marginRight: 10, fontSize: 20}} />
@@ -207,16 +238,18 @@ class SearchBarExample extends Component {
       } 
 
       else {
-        if(this.state.loadingPress) {
+        if(this.state.loadingPress || this.props.getLoading) {
           return (
             <View style={{flex: 1,alignContent: 'center', justifyContent: 'center', alignItems: 'center', backgroundColor: 'rgba(52, 52, 52, 0.8)'}}>
-                <Spinner color="blue" style={{alignSelf: 'center'}}/>
+              <CirclesLoader color='#D28496' />
+              <TextLoader text="Loading" />
             </View>
           );
         } else {
           return (
             <View style={{flex: 1,alignContent: 'center', justifyContent: 'center', alignItems: 'center'}}>
-                <Spinner color="blue" style={{alignSelf: 'center'}}/>
+              <CirclesLoader color='#D28496' />
+              <TextLoader text="Loading" />
             </View>
           );
         }
@@ -278,14 +311,16 @@ const styles = StyleSheet.create({
 });
 
 const mapStateToProps = (state) => ({
-  getLocation: state.location
+  getLocation: state.location,
+  getLoading: state.isLoading
 })
 
 const mapDispatchToProps = (dispatch) => ({
   actionGetLocation: (origin, dest) => { dispatch(getLocations(origin, dest)) },
   postDirectLocation: (data) => dispatch(DirectLocation(data)),
   getNearest: (lat, long) => dispatch(getNearest(lat, long)),
-  locationActions : (loc) => dispatch(LocationUser(loc))   
+  locationActions : (loc) => dispatch(LocationUser(loc)),
+  loadingAction: (data) => dispatch(isLoading(data))
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(SearchBarExample)

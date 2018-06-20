@@ -24,7 +24,8 @@ const initialState = {
   signUp: false,
   mainPage: {
     directLocation: null,
-  }
+  },
+  isLoading: false
 };
 
 export const reducer = (state = initialState, action) => {
@@ -58,10 +59,15 @@ export const reducer = (state = initialState, action) => {
         ...state,
         search: action.payload.data
       };
-      case "LOCATION_ACTION":
+    case "LOCATION_ACTION":
       return {
         ...state,
         location: action.payload.data
+      };
+    case "ISLOADING":
+      return {
+        ...state,
+        isLoading: action.payload.data
       };
     default:
       return state;

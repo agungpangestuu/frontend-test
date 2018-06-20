@@ -1,16 +1,16 @@
 import React, { Component } from "react";
-import { View, Image, Text } from "react-native";
+import { View, Image, Text, AsyncStorage } from "react-native";
 import { Icon } from "native-base";
 import { GooglePlacesAutocomplete } from "react-native-google-places-autocomplete";
 
-const homePlace = {
-  description: "Home",
-  geometry: { location: { lat: 48.8152937, lng: 2.4597668 } }
-};
-const workPlace = {
-  description: "Work",
-  geometry: { location: { lat: 48.8496818, lng: 2.2940881 } }
-};
+const getRecentLocation = async () => {
+  let recentLocation = await AsyncStorage.getItem("recentLocation")
+  if(recentLocation) {
+    return JSON.parse(recentLocation)
+  } else {
+    return []
+  }
+}
 
 export default class SearchBox extends Component {
   render() {
@@ -25,7 +25,18 @@ export default class SearchBox extends Component {
         renderDescription={row => row.description} // custom description render
         onPress={(data, details = null) => {
           // 'details' is provided when fetchDetails = true
+          this.props.loadingAction(true)
+          getRecentLocation().then(async (recentLocation) => {
+            let dataRecent = {
+              text: data.structured_formatting.secondary_text,
+              lat: details.geometry.location.lat,
+              long: details.geometry.location.lng
+            }
+            recentLocation.pop(dataRecent)
+            await AsyncStorage.setItem("recentLocation", JSON.stringify(recentLocation))
+          })
           console.log(data, details.geometry.location);
+          this.props.postDirectLocation(data.structured_formatting.secondary_text)
           this.props.locationActions(details.geometry.location)
           this.props.getNearest(details.geometry.location.lat, details.geometry.location.lng).then(result => {
             this.props.navigate({routeName: 'MainPage', key: 'MainPage1'})

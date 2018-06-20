@@ -1,18 +1,13 @@
 import React, { Component } from "react";
 import {
-  ActivityIndicator,
   TouchableOpacity,
-  ImageBackground,
-  StatusBar,
   StyleSheet,
   Text,
   View,
-  Dimensions,
   AsyncStorage
 } from "react-native";
 import { connect } from "react-redux"
-import { Tabs, Tab,Thumbnail, Content, List, ListItem } from "native-base";
-import Collapsible from "react-native-collapsible-header";
+import { Thumbnail, Content, List, ListItem } from "native-base";
 import { NavigationActions } from "react-navigation"
 
 class SideBar extends Component {
