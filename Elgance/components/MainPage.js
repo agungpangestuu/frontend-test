@@ -43,7 +43,7 @@ class MainPage extends Component {
     this.closeDrawer = this._closeDrawer.bind(this)
   }
   componentDidMount() {
-    StatusBarManager.setColor(processColor("#ff0000"), false);
+    StatusBarManager.setColor(processColor("#D28496"), false);
     // this.props.setAllCategory().then(resultAll => {
       this.setState({isLoading: false})
     // }).catch(err => {
@@ -90,7 +90,7 @@ class MainPage extends Component {
 
   render() {
     const { navigate } = this.props.navigation;
-    StatusBarManager.setColor(processColor("#ff0000"), false);
+    StatusBarManager.setColor(processColor("#D28496"), false);
     return (
       <Drawer
         ref={(ref) => { this._drawer = ref; }}

@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { View, Dimensions, StyleSheet, Text, TouchableOpacity, BackHandler, NativeModules, processColor } from 'react-native'
+import { View, Dimensions, StyleSheet, Text, TouchableOpacity, BackHandler, NativeModules, processColor, AsyncStorage } from 'react-native'
 // import { TabNavigator } from "react-navigation";
 import { Container,Content, Header, Item, Input, Icon, Body, Right, Left, Button, Title } from 'native-base';
 import {CirclesLoader, TextLoader} from 'react-native-indicator'
@@ -26,7 +26,8 @@ class SearchBarExample extends Component {
       isLoading: true,
       loadingPress: false,
       did: false,
-      will: false
+      will: false,
+      recent: []
     }
     this.handleBackAndroid = this._handleBackAndroid.bind(this)
     this.handleLoading = this._handleLoading.bind(this)
@@ -75,6 +76,16 @@ class SearchBarExample extends Component {
     }
   }
 
+  componentDidMount() {
+    console.log('ini lagi di did')
+   
+    AsyncStorage.getItem('recentLocation').then(result => {
+      let dataRecent = JSON.parse(result) 
+      console.log('ini data recent : ', dataRecent)
+      this.setState({recent: dataRecent})
+    }).catch(err => console.log(err))
+  }
+
   // componentDidUpdate() {
   //   console.log('update')
   //   console.log(this.state)
@@ -88,7 +99,8 @@ class SearchBarExample extends Component {
   }
 
   componentWillMount() {
-    StatusBarManager.setColor(processColor("#ff0000"), false);
+    StatusBarManager.setColor(processColor("#D28496"), false);
+    
     navigator.geolocation.getCurrentPosition(
       (position) => {
         this.setState({
@@ -103,7 +115,7 @@ class SearchBarExample extends Component {
         this.setState({ error: error.message })
         console.log(error)
       },
-      { enableHighAccuracy: true, timeout: 5000}
+      { enableHighAccuracy: false, timeout: 5000}
     );
     BackHandler.addEventListener('hardwareBackPress', this.handleBackAndroid);
   }
@@ -123,6 +135,14 @@ class SearchBarExample extends Component {
     this.setState({isLoading: true})
     this.props.postDirectLocation(item.text)
     // this.props.locationActions({lat: item.lat, long: item.long})
+
+    let objRecent = {
+      text: item.text,
+      lat:  item.lat,
+      long: item.long,
+    }
+    AsyncStorage.setItem("recentLocation", JSON.stringify(objRecent)).then(result => console.log(result))
+
     this.props.getNearest(item.lat, item.long).then(result => {
 
       console.log(result)
@@ -220,18 +240,9 @@ class SearchBarExample extends Component {
             })}
               
             </View>
-            <View style={{flex: 1, marginTop: 30}}>
 
-              <Text style={styles.headerLocation}>Recent Locations</Text>
-              <View style={{flex: 1,flexDirection: 'row',marginTop: 10 }}>
-                <Icon name="ios-pin" style={{alignSelf: 'center',marginLeft: 25, marginRight: 10, fontSize: 20}} />
-                <Text style={{fontSize: 17, alignSelf: 'center'}}>Cilegon</Text>
-              </View>
-              <View style={{flex: 1, flexDirection: 'row', marginTop: 10 }}>
-                <Icon name="ios-pin" style={{alignSelf: 'center',marginLeft: 25, marginRight: 10, fontSize: 20}} />
-                <Text style={{fontSize: 17, alignSelf: 'center'}}>Serpong</Text>
-              </View>
-            </View>
+            {(this.state.recent && this.state.recent.length > 0) ? this.recent() : <View></View>}
+              
             </Content>
           </Container>
         );
@@ -240,7 +251,7 @@ class SearchBarExample extends Component {
       else {
         if(this.state.loadingPress || this.props.getLoading) {
           return (
-            <View style={{flex: 1,alignContent: 'center', justifyContent: 'center', alignItems: 'center', backgroundColor: 'rgba(52, 52, 52, 0.8)'}}>
+            <View style={{flex: 1,alignContent: 'center', justifyContent: 'center', alignItems: 'center'}}>
               <CirclesLoader color='#D28496' />
               <TextLoader text="Loading" />
             </View>
@@ -255,6 +266,21 @@ class SearchBarExample extends Component {
         }
       }
     }
+  }
+  _recent() {
+    return (
+      <View style={{flex: 1, marginTop: 30}}>
+        <Text style={styles.headerLocation}>Recent Locations</Text>
+        <View style={{flex: 1,flexDirection: 'row',marginTop: 10 }}>
+          <Icon name="ios-pin" style={{alignSelf: 'center',marginLeft: 25, marginRight: 10, fontSize: 20}} />
+          <Text style={{fontSize: 17, alignSelf: 'center'}}>Cilegon</Text>
+        </View>
+        <View style={{flex: 1, flexDirection: 'row', marginTop: 10 }}>
+          <Icon name="ios-pin" style={{alignSelf: 'center',marginLeft: 25, marginRight: 10, fontSize: 20}} />
+          <Text style={{fontSize: 17, alignSelf: 'center'}}>Serpong</Text>
+        </View>
+      </View>
+    )
   }
 }
 

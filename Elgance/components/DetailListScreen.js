@@ -1,18 +1,19 @@
 import React, {Component} from 'react';
 import {connect} from 'react-redux'
-import {Modal, AsyncStorage, TouchableOpacity, ImageBackground, StatusBar, StyleSheet, Text, View, BackHandler, Alert, TouchableHighlight} from 'react-native';
+import {Dimensions, AsyncStorage, TouchableOpacity, ImageBackground, StatusBar, StyleSheet, Text, View, BackHandler, Alert, TouchableHighlight} from 'react-native';
 import Call from 'react-native-phone-call'
-import {Button, Container, Content, H3, Badge, Icon, Item, Input} from 'native-base'
+import {Button, Container, Content, H3, Badge, Icon, Form, Textarea} from 'native-base'
 import {CirclesLoader, TextLoader} from 'react-native-indicator'
 import {Rating} from 'react-native-elements'
 import Collapsible from 'react-native-collapsible-header'
 import axios from 'axios'
 import { AirbnbRating } from "react-native-ratings";
+import Modal from 'react-native-modal'
 
 // import {fetch_one_episode} from '../stores/episodeAction'
 import {postBookmark, postRecent} from './store/actions'
 
-// var { height, width } = Dimensions.get("window");
+var { height, width } = Dimensions.get("window");
 
 class DetailScreen extends Component {
   constructor(props) {
@@ -37,10 +38,11 @@ class DetailScreen extends Component {
     // this.props.fetchOne(params.id)
     console.log('ini detail props list ',this.props)
 
-    const { location } = this.props.detailList
+    const { location, lat, long } = this.props.detailList
 
-    if(location && location.hasOwnProperty('coordinates')){
-      this.setState({lat: location.coordinates[1], long: location.coordinates[0]})
+    if(lat && long){
+
+      this.setState({lat: long, long: lat})
     }
     else{
       this.setState({lat: this.props.getLocation.lat, long: this.props.getLocation.long})
@@ -68,19 +70,23 @@ class DetailScreen extends Component {
     // if (location && location.hasOwnProperty('coordinates')) {
       axios.get(`https://maps.googleapis.com/maps/api/geocode/json?latlng=${this.state.lat},${this.state.long}&key=AIzaSyAjWOHPrXscmVtlGBYIsi6ZrvF8ZYydteI`)
       .then(({data}) => {
-        console.log(data)
+        console.log('ini data : ',data)
         data.results.forEach(item => {
           console.log(item.types)
           if(item.types.includes("administrative_area_level_2") || item.types.includes("administrative_area_level_3")){
-            console.log('masuk')
-            this.setState({
-              distric: item.formatted_address,
-              isLoading: false
-            })
+            if(this.state.distric){
+              return
+            }
+            else {
+              this.setState({
+                distric: item.formatted_address,
+                isLoading: false
+              })
+            }
+            
           }
           else {
             this.setState({
-              distric: '',
               isLoading: false
             })
           }
@@ -88,7 +94,6 @@ class DetailScreen extends Component {
       })
       .catch(err => {
         this.setState({
-          distric: '',
           isLoading: false
         })
         console.log(err)
@@ -100,6 +105,10 @@ class DetailScreen extends Component {
     //     isLoading: false
     //   })
     // }
+  }
+
+  componentDidUpdate(){
+    console.log('update state : ',this.state)
   }
 
   _handleBackAndroid() {
@@ -174,6 +183,38 @@ class DetailScreen extends Component {
     
     
   }
+  _renderModalContent = () => (
+    <View style={styles.modalContent}>
+      <AirbnbRating
+        count={5}
+        reviews={["Bad", "OK", "Good", "Very Good","Amazing"]}
+        defaultRating={5}
+        size={50}
+      />
+      <View style={{backgroundColor: 'red', width: width-80, height: height/4}}>
+        <Textarea rowSpan={5} placeholder="Textarea asa" />
+      </View>
+      <View style={{flexDirection: 'column', backgroundColor: 'blue', width: width-80, height: height/4, alignItems: 'center', justifyContent: 'center'}}> 
+      <TouchableOpacity
+        onPress={() => {
+          this.setModalVisible(!this.state.modalVisible);
+        }} style={{flexDirection: 'column', alignItems: 'center', justifyContent: 'center', flex: 1}}>
+        <View style={styles.button}>
+          <Text>Submit</Text>
+        </View>
+      </TouchableOpacity>
+      <TouchableOpacity
+        onPress={() => {
+          this.setModalVisible(!this.state.modalVisible);
+        }} style={{flexDirection: 'column', alignItems: 'center', justifyContent: 'center', flex: 1}}>
+        <View style={styles.button}>
+          <Text>Hide Modal</Text>
+        </View>
+      </TouchableOpacity>
+      </View>
+      
+    </View>
+  )
 
   renderIcon(item) {
     if(item.id === 3 ) {
@@ -345,35 +386,13 @@ class DetailScreen extends Component {
             />
 
             {/* modal*/}
-              <Modal
-                animationType="fade"
-                transparent={true}
-                visible={this.state.modalVisible}
-                presentationStyle={'formSheet'}
-                onRequestClose={() => {
-                  alert('Modal has been closed.');
-                }}>
-                <View style={{flex:1,marginTop: 22}}>
-                  <View>
-                    <Text>Hello World!</Text>
-                    <AirbnbRating
-                      count={5}
-                      reviews={["Bad", "OK", "Good", "Very Good","Amazing"]}
-                      defaultRating={5}
-                      size={50}
-                    />
-                    <Item>
-                      <Input placeholder="Underline Textbox" />
-                    </Item>
-                    <TouchableOpacity
-                      onPress={() => {
-                        this.setModalVisible(!this.state.modalVisible);
-                      }}>
-                      <Text>Hide Modal</Text>
-                    </TouchableOpacity>
-                  </View>
-                </View>
-              </Modal>
+            <Modal
+          isVisible={this.state.modalVisible}
+          onBackdropPress={() => this.setState({ modalVisible: false })}
+          >
+          {this._renderModalContent()}
+          </Modal>
+          
             {/* end modal */}
 
           </Container>
@@ -444,7 +463,44 @@ const styles = StyleSheet.create({
     alignContent: 'center',
     alignItems: 'center',
     justifyContent: 'center'
+  },
+  button: {
+    backgroundColor: "lightblue",
+    padding: 12,
+    margin: 16,
+    justifyContent: "center",
+    alignItems: "center",
+    borderRadius: 4,
+    borderColor: "rgba(0, 0, 0, 0.1)"
+  },
+  modalContent: {
+    backgroundColor: "white",
+    padding: 22,
+    justifyContent: "center",
+    alignItems: "center",
+    borderRadius: 4,
+    borderColor: "rgba(0, 0, 0, 0.1)"
+  },
+  bottomModal: {
+    justifyContent: "flex-end",
+    margin: 0
+  },
+  scrollableModal: {
+    height: 300
+  },
+  scrollableModalContent1: {
+    height: 200,
+    backgroundColor: "orange",
+    alignItems: "center",
+    justifyContent: "center"
+  },
+  scrollableModalContent2: {
+    height: 200,
+    backgroundColor: "lightgreen",
+    alignItems: "center",
+    justifyContent: "center"
   }
+
 });
 
 const mapStateToProps = (state) => ({

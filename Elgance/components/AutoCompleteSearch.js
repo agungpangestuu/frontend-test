@@ -32,8 +32,10 @@ export default class SearchBox extends Component {
               lat: details.geometry.location.lat,
               long: details.geometry.location.lng
             }
+            console.log(dataRecent)
             recentLocation.pop(dataRecent)
-            await AsyncStorage.setItem("recentLocation", JSON.stringify(recentLocation))
+            let result = await AsyncStorage.setItem("recentLocation", JSON.stringify(recentLocation))
+            console.log(result)
           })
           console.log(data, details.geometry.location);
           this.props.postDirectLocation(data.structured_formatting.secondary_text)
