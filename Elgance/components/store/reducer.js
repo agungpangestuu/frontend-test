@@ -25,7 +25,8 @@ const initialState = {
   mainPage: {
     directLocation: null,
   },
-  isLoading: false
+  isLoading: false,
+  recenLocations: []
 };
 
 export const reducer = (state = initialState, action) => {
@@ -68,6 +69,11 @@ export const reducer = (state = initialState, action) => {
       return {
         ...state,
         isLoading: action.payload.data
+      };
+    case "RECENTLOCATIONS":
+      return {
+        ...state,
+        recenLocations: action.payload.data
       };
     default:
       return state;

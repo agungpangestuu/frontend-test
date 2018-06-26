@@ -54,6 +54,13 @@ export const LocationUser = (data) => ({
   }
 });
 
+const recentLocations = () => ({
+  type: "RECENTLOCATIONS",
+  payload: {
+    data
+  }
+})
+
 export const login_user = obj => {
   return async (dispatch, getState) => {
     return new Promise((resolve, reject) => {
@@ -183,6 +190,24 @@ export const postBookmark = (userId, salonId) => {
         // reject(err)
       })
     // })
+  }
+}
+
+export const getLocationRecent = () => {
+  return (dispatch, getstate) => {
+    AsyncStorage.getItem('recentLocation').then(result => {
+        result = JSON.parse(result)
+      //   result.bookmark.push(userId)
+      //   AsyncStorage.setItem('credential', JSON.stringify(result)).then(hasil => {
+      //     console.log(hasil)
+      //   })
+      })
+  }
+}
+
+export const postLocationRecent = () => {
+  return (dispatch, getState) => {
+
   }
 }
 

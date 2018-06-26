@@ -152,7 +152,7 @@ const styles = StyleSheet.create({
         flex: 1,
         width: null,
         height: null,
-        backgroundColor: 'rgba(0,0,0,0)',
+        backgroundColor: '#D28496',
     },
     container: {
         flex: 1,

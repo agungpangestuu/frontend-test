@@ -29,7 +29,8 @@ class DetailScreen extends Component {
       rate: null,
       star: false,
       lat: null,
-      long: null
+      long: null,
+      service: []
     }
     this.handleBackAndroid = this._handleBackAndroid.bind(this)
   }
@@ -38,7 +39,7 @@ class DetailScreen extends Component {
     // this.props.fetchOne(params.id)
     console.log('ini detail props list ',this.props)
 
-    const { location, lat, long } = this.props.detailList
+    const { location, lat, long, service } = this.props.detailList
 
     if(lat && long){
 
@@ -54,6 +55,12 @@ class DetailScreen extends Component {
       this.setState({bookmark: true})
     } else if (beenHere.length > 0) {
       this.setState({beenHere: true})
+    }
+
+    if(service) {
+      let arrService = service.split(',')
+      console.log(arrService)
+      this.setState({service: arrService})
     }
 
     if(this.props.detailList.review.length > 0 ) {
@@ -334,6 +341,16 @@ class DetailScreen extends Component {
                   <View style={styles.line}/>
                   <H3>SERVICE</H3>
                   <Text>{detailList.service}</Text>
+                  <View style={{flex: 1, flexDirection: 'row', marginLeft: 10, marginRight: 10, flexWrap: "wrap"}}>
+                    {this.state.service.map(item => {
+                      console.log('ini item : ',item)
+                      return ( 
+                        <View style={styles.recentLocation}>
+                          <Text>{item}</Text>
+                        </View>
+                      )
+                    })}
+                  </View>
                   <View style={[styles.line,{marginTop: 30}]}/>
                   
                 </Content>
@@ -379,6 +396,16 @@ class DetailScreen extends Component {
                   <View style={styles.line}/>
                   <H3>SERVICE</H3>
                   <Text>{detailList.service}</Text>
+                  <View style={{flex: 1, flexDirection: 'row', marginLeft: 10, marginRight: 10, flexWrap: "wrap"}}>
+                    {this.state.service.map(item => {
+                      console.log('ini item : ',item)
+                      return ( 
+                        <View style={styles.recentLocation}>
+                          <Text>{item}</Text>
+                        </View>
+                      )
+                    })}
+                  </View>
                   <View style={[styles.line,{marginTop: 30}]}/>
                   
                 </Content>
@@ -499,7 +526,17 @@ const styles = StyleSheet.create({
     backgroundColor: "lightgreen",
     alignItems: "center",
     justifyContent: "center"
-  }
+  },
+  recentLocation: {
+    borderWidth: 2,
+    borderColor: '#000',
+    marginLeft: 10,
+    marginVertical: 0,
+    marginTop: 20,
+    alignItems: 'center',
+    width: width/3-20,
+    height: 50
+  },
 
 });
 
