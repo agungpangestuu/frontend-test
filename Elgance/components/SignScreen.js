@@ -115,11 +115,13 @@ export class componentName extends Component {
                      'so you can take awesome pictures.'
         }
       )
-      if (granted === PermissionsAndroid.RESULTS.GRANTED) {
-        return granted
+      if (granted) {
         console.log("You can use the camera")
+        this._getLocation()
+        return granted
       } else {
         console.log("Camera permission denied")
+        this.setState({refreshing: false})
         return granted
       }
     } catch (err) {
@@ -151,7 +153,7 @@ export class componentName extends Component {
           style: 'cancel',
         },
         // this.state.locationPermission == 'undetermined'
-          { text: 'OK', onPress: this._requestPermission }
+          { text: 'OK', onPress: () => this._requestPermission() }
           // : { text: 'Open Settings', onPress: Permissions.openSettings },
       ],
     )
@@ -175,14 +177,14 @@ export class componentName extends Component {
           <View  style={styles.backgroundImage}>
             <View
               style={{
-                backgroundColor: 'white',
+                backgroundColor: '#D28496',
                 flex: 1,
                 alignContent: 'center',
                 alignItems: 'center',
                 justifyContent: 'center',
               }}
             >
-              <Text style={{fontWeight: 'bold', fontSize: 50, marginBottom: 30}}>Login</Text>
+              <Text style={{fontWeight: 'bold', fontSize: 50, marginBottom: 30, color: 'white'}}>Login</Text>
                 <Button rounded light onPress={() => navigate("SignUpScreen")} style={{alignSelf: 'center', width: 250,marginBottom: 20, justifyContent: 'center', alignContent: 'center'}}>
                 <Text style={{textAlign: 'center', color: 'green'}}>SIGN UP</Text>
               </Button>
@@ -230,7 +232,7 @@ export class componentName extends Component {
       flex: 1,
       width: null,
       height: null,
-      backgroundColor: 'rgba(0,0,0,0)',
+      backgroundColor: '#D28496',
     },
     container: {
       flex: 1,

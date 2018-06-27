@@ -26,7 +26,7 @@ const initialState = {
     directLocation: null,
   },
   isLoading: false,
-  recenLocations: []
+  recentLocations: []
 };
 
 export const reducer = (state = initialState, action) => {
@@ -73,7 +73,7 @@ export const reducer = (state = initialState, action) => {
     case "RECENTLOCATIONS":
       return {
         ...state,
-        recenLocations: action.payload.data
+        recentLocations: action.payload.data
       };
     default:
       return state;

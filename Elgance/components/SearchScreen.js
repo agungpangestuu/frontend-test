@@ -9,7 +9,7 @@ import { NavigationActions } from "react-navigation"
 
 import {locationInBanten} from './locationInBanten'
 import SeacrhInput from './AutoCompleteSearch';
-import { getLocations, DirectLocation, getNearest, LocationUser, isLoading } from "./store/actions"
+import { getLocations, DirectLocation, getNearest, LocationUser, isLoading, getLocationRecent, postLocationRecent } from "./store/actions"
 
 var { height, width } = Dimensions.get("window");
 const { StatusBarManager } = NativeModules;
@@ -27,10 +27,11 @@ class SearchBarExample extends Component {
       loadingPress: false,
       did: false,
       will: false,
-      recent: []
+      recents: []
     }
     this.handleBackAndroid = this._handleBackAndroid.bind(this)
     this.handleLoading = this._handleLoading.bind(this)
+    this.recent = this._recent.bind(this)
   }
   _getLocationInBanten(){
     var count = 0
@@ -46,8 +47,6 @@ class SearchBarExample extends Component {
             long: item.long
           }
           
-          console.log('ini orgin : ', origin)
-          console.log('ini dest : ', dest)
           try {
             let fetch = await axios.get(`https://maps.googleapis.com/maps/api/distancematrix/json?units=metric&origins=${origin.lat},${origin.long}&destinations=${dest.lat},${dest.long}&key=AIzaSyAjWOHPrXscmVtlGBYIsi6ZrvF8ZYydteI`)
             // console.log('ini fetch : ',fetch)
@@ -68,8 +67,6 @@ class SearchBarExample extends Component {
         });
       }, 1000);
       
-      console.log('ini location in banten : ', result)
-      console.log(this.state)
       if(this.state.distance) {
         this.setState({did: true})
       }
@@ -77,13 +74,8 @@ class SearchBarExample extends Component {
   }
 
   componentDidMount() {
-    console.log('ini lagi di did')
-   
-    AsyncStorage.getItem('recentLocation').then(result => {
-      let dataRecent = JSON.parse(result) 
-      console.log('ini data recent : ', dataRecent)
-      this.setState({recent: dataRecent})
-    }).catch(err => console.log(err))
+    this.props.getLocationRecent()
+    console.log('ini recent : ',this.props.getRecent)
   }
 
   // componentDidUpdate() {
@@ -109,7 +101,6 @@ class SearchBarExample extends Component {
           will: true
         });
         this._getLocationInBanten()
-        console.log(this.state)
       },
       (error) => {
         this.setState({ error: error.message })
@@ -130,7 +121,6 @@ class SearchBarExample extends Component {
   }
 
   _handleOnpressLocation(item) {
-    console.log('ini item ', item)
 
     this.setState({isLoading: true})
     this.props.postDirectLocation(item.text)
@@ -141,11 +131,11 @@ class SearchBarExample extends Component {
       lat:  item.lat,
       long: item.long,
     }
-    AsyncStorage.setItem("recentLocation", JSON.stringify(objRecent)).then(result => console.log(result))
+
+    this.props.postLocationRecent(objRecent)
 
     this.props.getNearest(item.lat, item.long).then(result => {
 
-      console.log(result)
       const resetAction = NavigationActions.reset({
         index: 0,
         actions: [
@@ -180,7 +170,6 @@ class SearchBarExample extends Component {
     
   }
   _handleLoading() {
-    console.log(!this.state.isLoading && this.state.did && this.state.will)
     return !this.state.isLoading && this.state.did && this.state.will
   }
   
@@ -241,7 +230,7 @@ class SearchBarExample extends Component {
               
             </View>
 
-            {(this.state.recent && this.state.recent.length > 0) ? this.recent() : <View></View>}
+            {(this.props.getRecent && this.props.getRecent.length > 0) ? this.recent() : <View></View>}
               
             </Content>
           </Container>
@@ -271,14 +260,16 @@ class SearchBarExample extends Component {
     return (
       <View style={{flex: 1, marginTop: 30}}>
         <Text style={styles.headerLocation}>Recent Locations</Text>
-        <View style={{flex: 1,flexDirection: 'row',marginTop: 10 }}>
-          <Icon name="ios-pin" style={{alignSelf: 'center',marginLeft: 25, marginRight: 10, fontSize: 20}} />
-          <Text style={{fontSize: 17, alignSelf: 'center'}}>Cilegon</Text>
-        </View>
-        <View style={{flex: 1, flexDirection: 'row', marginTop: 10 }}>
-          <Icon name="ios-pin" style={{alignSelf: 'center',marginLeft: 25, marginRight: 10, fontSize: 20}} />
-          <Text style={{fontSize: 17, alignSelf: 'center'}}>Serpong</Text>
-        </View>
+        {this.props.getRecent.map(item => {
+          return (
+          <TouchableOpacity onPress={() => this._handleOnpressLocation(item)} >
+            <View style={{flex: 1,flexDirection: 'row',marginTop: 10, marginBottom: 10 }}>
+              <Icon name="ios-pin" style={{alignSelf: 'center',marginLeft: 25, marginRight: 10, fontSize: 20}} />
+              <Text style={{fontSize: 17, alignSelf: 'center'}}>{(item && item.text) ? item.text : ''}</Text>
+            </View>
+          </TouchableOpacity>
+          )
+        })}
       </View>
     )
   }
@@ -338,7 +329,8 @@ const styles = StyleSheet.create({
 
 const mapStateToProps = (state) => ({
   getLocation: state.location,
-  getLoading: state.isLoading
+  getLoading: state.isLoading,
+  getRecent: state.recentLocations
 })
 
 const mapDispatchToProps = (dispatch) => ({
@@ -346,7 +338,9 @@ const mapDispatchToProps = (dispatch) => ({
   postDirectLocation: (data) => dispatch(DirectLocation(data)),
   getNearest: (lat, long) => dispatch(getNearest(lat, long)),
   locationActions : (loc) => dispatch(LocationUser(loc)),
-  loadingAction: (data) => dispatch(isLoading(data))
+  loadingAction: (data) => dispatch(isLoading(data)),
+  postLocationRecent: (recent) => dispatch(postLocationRecent(recent)),
+  getLocationRecent: (recent) => dispatch(getLocationRecent(recent))
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(SearchBarExample)

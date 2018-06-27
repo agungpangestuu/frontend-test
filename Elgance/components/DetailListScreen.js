@@ -340,8 +340,7 @@ class DetailScreen extends Component {
                   <Text></Text>
                   <View style={styles.line}/>
                   <H3>SERVICE</H3>
-                  <Text>{detailList.service}</Text>
-                  <View style={{flex: 1, flexDirection: 'row', marginLeft: 10, marginRight: 10, flexWrap: "wrap"}}>
+                  <View style={{flex: 1, flexDirection: 'row', flexWrap: "wrap"}}>
                     {this.state.service.map(item => {
                       console.log('ini item : ',item)
                       return ( 
@@ -395,13 +394,12 @@ class DetailScreen extends Component {
                   <Text>{detailList.address}</Text>
                   <View style={styles.line}/>
                   <H3>SERVICE</H3>
-                  <Text>{detailList.service}</Text>
-                  <View style={{flex: 1, flexDirection: 'row', marginLeft: 10, marginRight: 10, flexWrap: "wrap"}}>
+                  <View style={{flex: 1, flexDirection: 'row', flexWrap: "wrap"}}>
                     {this.state.service.map(item => {
                       console.log('ini item : ',item)
                       return ( 
                         <View style={styles.recentLocation}>
-                          <Text>{item}</Text>
+                          <Text>{item.trim()}</Text>
                         </View>
                       )
                     })}
@@ -528,11 +526,10 @@ const styles = StyleSheet.create({
     justifyContent: "center"
   },
   recentLocation: {
-    borderWidth: 2,
-    borderColor: '#000',
-    marginLeft: 10,
+    marginLeft: 5,
     marginVertical: 0,
-    marginTop: 20,
+    marginTop: 30,
+    marginBottom: 10,
     alignItems: 'center',
     width: width/3-20,
     height: 50

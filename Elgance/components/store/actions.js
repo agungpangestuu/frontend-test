@@ -54,7 +54,7 @@ export const LocationUser = (data) => ({
   }
 });
 
-const recentLocations = () => ({
+const recentLocations = (data) => ({
   type: "RECENTLOCATIONS",
   payload: {
     data
@@ -111,7 +111,7 @@ export const signup_user = obj => {
 };
 
 export const getLocations = (origin, dest) => {
-  return (disoatch, getState) => {
+  return (dispatch, getState) => {
     return new Promise((resolve, reject) => {
       axios.post(`https://maps.googleapis.com/maps/api/distancematrix/json?units=metric&origins=${origin.lat},${origin.long}&destinations=${destination.lat},${destinantion.long}&key=AIzaSyAjWOHPrXscmVtlGBYIsi6ZrvF8ZYydteI`)
       .then( ({ data }) => {
@@ -195,19 +195,41 @@ export const postBookmark = (userId, salonId) => {
 
 export const getLocationRecent = () => {
   return (dispatch, getstate) => {
-    AsyncStorage.getItem('recentLocation').then(result => {
-        result = JSON.parse(result)
-      //   result.bookmark.push(userId)
-      //   AsyncStorage.setItem('credential', JSON.stringify(result)).then(hasil => {
-      //     console.log(hasil)
-      //   })
-      })
+    AsyncStorage.getItem('recentLocation')
+    .then(result => {
+        result = JSON.parse(result) 
+        console.log('ini action result : ',result)
+        dispatch(recentLocations(result))
+    })
+    .catch(e => console.log(e))
   }
 }
 
-export const postLocationRecent = () => {
+export const postLocationRecent = (recentLocation) => {
   return (dispatch, getState) => {
+    let result = (!getState().recentLocations) ? [] : [...getState().recentLocations].map(item => {
+       if (item.text !== recentLocation.text && item.lat !== recentLocation.lat && item.long !== recentLocation.long) {
+         return item
+       }
+    })
+    if (result.length === 5) {
+      console.log('ini action sebelum pop :',getState().recentLocations)
+      result.pop()
+      console.log('ini action sesudah pop : ',result)
+      result.unshift(recentLocation)
+      console.log('ini action setelah unshift : ', result)
+      AsyncStorage.setItem("recentLocation", JSON.stringify(result)).then(succes => dispatch(recentLocations(result))).catch(err => console.log(err))
+      
+    }
+    else if (result.length < 5){
+      console.log('ini getstate : ', getState())
+      let recent = [recentLocation, ...result]
 
+      AsyncStorage.setItem("recentLocation", JSON.stringify(recent)).then(succes => dispatch(recentLocations(result))).catch(err => console.log(err))
+    }
+    else {
+      AsyncStorage.setItem("recentLocation", JSON.stringify([recentLocation])).then(succes => dispatch(recentLocations(result))).catch(err => console.log(err))
+    }
   }
 }
 
