@@ -26,18 +26,13 @@ export default class SearchBox extends Component {
         onPress={(data, details = null) => {
           // 'details' is provided when fetchDetails = true
           this.props.loadingAction(true)
-          getRecentLocation().then(async (recentLocation) => {
-            let dataRecent = {
-              text: data.structured_formatting.secondary_text,
-              lat: details.geometry.location.lat,
-              long: details.geometry.location.lng
-            }
-            console.log(dataRecent)
-            recentLocation.pop(dataRecent)
-            let result = await AsyncStorage.setItem("recentLocation", JSON.stringify(recentLocation))
-            console.log(result)
-          })
-          console.log(data, details.geometry.location);
+          let dataRecent = {
+            text: data.structured_formatting.secondary_text,
+            lat: details.geometry.location.lat,
+            long: details.geometry.location.lng
+          }
+          this.props.postLocationRecent(dataRecent)
+
           this.props.postDirectLocation(data.structured_formatting.secondary_text)
           this.props.locationActions(details.geometry.location)
           this.props.getNearest(details.geometry.location.lat, details.geometry.location.lng).then(result => {

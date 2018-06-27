@@ -153,6 +153,14 @@ class SearchBarExample extends Component {
       data.results.forEach(item => {
         if(item.types.includes("administrative_area_level_2") || item.types.includes("administrative_area_level_3")){
           this.props.postDirectLocation(item.formatted_address) 
+
+          let objRecent = {
+            text: item.formatted_address,
+            lat:  this.state.latitude,
+            long: this.state.longitude,
+          }
+
+          this.props.postLocationRecent(objRecent)
         }
       })
     })
@@ -205,7 +213,7 @@ class SearchBarExample extends Component {
             </Header>
             <Content style={{backgroundColor: 'white'}}>
             
-            <SeacrhInput locationActions={this.props.locationActions} loadingAction={this.props.loadingAction}  postDirectLocation={this.props.postDirectLocation} navigate={this.props.navigation.navigate} getNearest={this.props.getNearest}/>
+            <SeacrhInput locationActions={this.props.locationActions} postLocationRecent={this.props.postLocationRecent} loadingAction={this.props.loadingAction}  postDirectLocation={this.props.postDirectLocation} navigate={this.props.navigation.navigate} getNearest={this.props.getNearest}/>
             <TouchableOpacity onPress={() => this._handleOnpressDetectLocation()}>
               <View style={styles.container}>
                 <Icon name="ios-locate-outline" style={{ fontSize: 30, color: "red" }}/>

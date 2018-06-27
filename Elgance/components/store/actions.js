@@ -207,11 +207,13 @@ export const getLocationRecent = () => {
 
 export const postLocationRecent = (recentLocation) => {
   return (dispatch, getState) => {
-    let result = (!getState().recentLocations) ? [] : [...getState().recentLocations].map(item => {
+    let result = (!getState().recentLocations) ? [] : [...getState().recentLocations].filter(item => {
+      console.log('ini item : ',item)
        if (item.text !== recentLocation.text && item.lat !== recentLocation.lat && item.long !== recentLocation.long) {
          return item
        }
     })
+    console.log('ini map result : ',result)
     if (result.length === 5) {
       console.log('ini action sebelum pop :',getState().recentLocations)
       result.pop()
