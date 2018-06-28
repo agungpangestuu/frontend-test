@@ -184,9 +184,9 @@ export class componentName extends Component {
                 justifyContent: 'center',
               }}
             >
-              <Text style={{fontWeight: 'bold', fontSize: 50, marginBottom: 30, color: 'white'}}>Login</Text>
+              <Text style={{fontWeight: 'bold', fontSize: 50, marginBottom: 30, color: 'black'}}>Login</Text>
                 <Button rounded light onPress={() => navigate("SignUpScreen")} style={{alignSelf: 'center', width: 250,marginBottom: 20, justifyContent: 'center', alignContent: 'center'}}>
-                <Text style={{textAlign: 'center', color: 'green'}}>SIGN UP</Text>
+                <Text style={{textAlign: 'center', color: 'black'}}>SIGN UP</Text>
               </Button>
              
               <Button rounded onPress={() => navigate({routeName: "LoginScreen", key: 'LoginScren1'})} style={{alignSelf: 'center', width: 250,marginBottom: 30, justifyContent: 'center', alignContent: 'center'}}>

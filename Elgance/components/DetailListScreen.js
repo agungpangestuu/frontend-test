@@ -11,7 +11,7 @@ import { AirbnbRating } from "react-native-ratings";
 import Modal from 'react-native-modal'
 
 // import {fetch_one_episode} from '../stores/episodeAction'
-import {postBookmark, postRecent} from './store/actions'
+import {postBookmark, postRecent, postReview} from './store/actions'
 
 var { height, width } = Dimensions.get("window");
 
@@ -30,7 +30,11 @@ class DetailScreen extends Component {
       star: false,
       lat: null,
       long: null,
-      service: []
+      service: [],
+      review: {
+        text: '',
+        star: 1
+      }
     }
     this.handleBackAndroid = this._handleBackAndroid.bind(this)
   }
@@ -190,6 +194,27 @@ class DetailScreen extends Component {
     
     
   }
+  handleChangeTextArea(e) {
+    let review = Object.assign({}, this.state.review)
+    let value = e.target.value
+
+    review.text = value
+
+    this.setState({review})
+  }
+
+  handleSubmitModal() {
+    let review ={ 
+      salon_id: this.props.detailList._id,
+      user_id: this.props,
+      text: this.state.review.text,
+      star: this.state.review.star
+    }
+    this.props.postReview(review)
+
+    this.setModalVisible(!this.state.modalVisible)
+  }
+
   _renderModalContent = () => (
     <View style={styles.modalContent}>
       <AirbnbRating
@@ -197,25 +222,18 @@ class DetailScreen extends Component {
         reviews={["Bad", "OK", "Good", "Very Good","Amazing"]}
         defaultRating={5}
         size={50}
+        onFinishRating={this.ratingCompleted}
       />
       <View style={{backgroundColor: 'red', width: width-80, height: height/4}}>
-        <Textarea rowSpan={5} placeholder="Textarea asa" />
+        <Textarea rowSpan={5} placeholder="Textarea asa" onChange={(e) => this.handleChangeTextArea(e)} />
       </View>
-      <View style={{flexDirection: 'column', backgroundColor: 'blue', width: width-80, height: height/4, alignItems: 'center', justifyContent: 'center'}}> 
+      <View style={{flexDirection: 'column', width: width-80, height: height/4, alignItems: 'center', justifyContent: 'center'}}> 
       <TouchableOpacity
         onPress={() => {
-          this.setModalVisible(!this.state.modalVisible);
+          this.handleSubmitModal()
         }} style={{flexDirection: 'column', alignItems: 'center', justifyContent: 'center', flex: 1}}>
         <View style={styles.button}>
           <Text>Submit</Text>
-        </View>
-      </TouchableOpacity>
-      <TouchableOpacity
-        onPress={() => {
-          this.setModalVisible(!this.state.modalVisible);
-        }} style={{flexDirection: 'column', alignItems: 'center', justifyContent: 'center', flex: 1}}>
-        <View style={styles.button}>
-          <Text>Hide Modal</Text>
         </View>
       </TouchableOpacity>
       </View>
@@ -405,7 +423,18 @@ class DetailScreen extends Component {
                     })}
                   </View>
                   <View style={[styles.line,{marginTop: 30}]}/>
-                  
+                  <H3>Reviews</H3>
+                  <View style={{flex: 1, flexDirection: 'row', flexWrap: "wrap"}}>
+                    {this.state.service.map(item => {
+                      console.log('ini item : ',item)
+                      return ( 
+                        <View style={styles.recentLocation}>
+                          <Text>{item.trim()}</Text>
+                        </View>
+                      )
+                    })}
+                  </View>
+                  <View style={[styles.line,{marginTop: 30}]}/>
                 </Content>
               }
             />
@@ -548,7 +577,8 @@ const mapDispatchToProps = (dispatch) => ({
   // fetchOne: (id) => dispatch(fetch_one_episode(id))
   bookmarkPost: (userId, salonId) => { dispatch(postBookmark(userId, salonId))},
   recentPost: (userId, salonId) => { dispatch(postRecent(userId, salonId))},
-  postLogin_state: obj => dispatch(login_user(obj))
+  postLogin_state: obj => dispatch(login_user(obj)),
+  postReview: review => dispatch(postReview(review))
 })
 
 

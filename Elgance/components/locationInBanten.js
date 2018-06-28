@@ -104,8 +104,8 @@ export var locationInBanten = [
       id: 15,
       distance: "10 km",
       text: "Cinere",
-      lat: -6.7461172, 
-      long: 106.157379
+      lat: -6.324318, 
+      long: 106.781812
     },
   ]
 
