@@ -9,6 +9,7 @@ import Collapsible from 'react-native-collapsible-header'
 import axios from 'axios'
 import { AirbnbRating } from "react-native-ratings";
 import Modal from 'react-native-modal'
+import { Table, TableWrapper, Row, Rows, Col, Cols, Cell } from 'react-native-table-component'
 
 // import {fetch_one_episode} from '../stores/episodeAction'
 import {postBookmark, postRecent, postReview} from './store/actions'
@@ -63,8 +64,20 @@ class DetailScreen extends Component {
 
     if(service) {
       let arrService = service.split(',')
-      console.log(arrService)
-      this.setState({service: arrService})
+      let arr = []
+      let tempArr = []
+      for (let i = 0; i <= arrService.length; i++) {
+        if(arrService.length === i) {
+          console.log('ini arr service : ',arr)
+          this.setState({service: arr})
+        }
+        if (tempArr.length === 3) {
+          arr.push(tempArr)
+          tempArr = []
+        }
+        tempArr.push(arrService[i])        
+      }
+      // this.setState({service: arrService})
     }
 
     if(this.props.detailList.review.length > 0 ) {
@@ -148,7 +161,9 @@ class DetailScreen extends Component {
   }
 
   setModalVisible(visible) {
-    this.setState({modalVisible: visible});
+    const { navigate, push } = this.props.navigation
+    navigate({ routeName: "ReviewScreen", key: 'Review'})
+    // this.setState({modalVisible: visible});
   }
 
   handlePress(item) {
@@ -228,6 +243,10 @@ class DetailScreen extends Component {
         <Textarea rowSpan={5} placeholder="Textarea asa" onChange={(e) => this.handleChangeTextArea(e)} />
       </View>
       <View style={{flexDirection: 'column', width: width-80, height: height/4, alignItems: 'center', justifyContent: 'center'}}> 
+      <View style={{flexDirection: 'column', alignItems: 'center', justifyContent: 'center', flex: 1}}>
+        <Text style={{flexDirection: 'column', alignItems: 'center', justifyContent: 'center', flex: 1}}>test1</Text>
+        <Text style={{flexDirection: 'column', alignItems: 'center', justifyContent: 'center', flex: 1}}>test</Text>
+      </View>
       <TouchableOpacity
         onPress={() => {
           this.handleSubmitModal()
@@ -358,16 +377,17 @@ class DetailScreen extends Component {
                   <Text></Text>
                   <View style={styles.line}/>
                   <H3>SERVICE</H3>
-                  <View style={{flex: 1, flexDirection: 'row', flexWrap: "wrap"}}>
-                    {this.state.service.map(item => {
-                      console.log('ini item : ',item)
-                      return ( 
-                        <View style={styles.recentLocation}>
-                          <Text>{item}</Text>
-                        </View>
-                      )
-                    })}
-                  </View>
+                  {(!this.isLoading && this.state.service.length > 0 ) ? 
+                  (<View style={styles.tablContainer}>
+                    <Table>
+                      <TableWrapper style={styles.wrapper}>
+                        <Rows data={this.state.service} flexArr={[2, 2, 2]} style={styles.row} textStyle={styles.text}/>
+                      </TableWrapper>
+                    </Table>
+                  </View> ):
+                  (<View />) 
+                  }
+                  
                   <View style={[styles.line,{marginTop: 30}]}/>
                   
                 </Content>
@@ -412,16 +432,16 @@ class DetailScreen extends Component {
                   <Text>{detailList.address}</Text>
                   <View style={styles.line}/>
                   <H3>SERVICE</H3>
-                  <View style={{flex: 1, flexDirection: 'row', flexWrap: "wrap"}}>
-                    {this.state.service.map(item => {
-                      console.log('ini item : ',item)
-                      return ( 
-                        <View style={styles.recentLocation}>
-                          <Text>{item.trim()}</Text>
-                        </View>
-                      )
-                    })}
-                  </View>
+                  {(!this.isLoading && this.state.service.length > 0 ) ? 
+                  (<View style={styles.tablContainer}>
+                    <Table>
+                      <TableWrapper style={styles.wrapper}>
+                        <Rows data={this.state.service} flexArr={[2, 2, 2]} style={styles.row} textStyle={styles.text}/>
+                      </TableWrapper>
+                    </Table>
+                  </View> ):
+                  (<View />) 
+                  }
                   <View style={[styles.line,{marginTop: 30}]}/>
                   <H3>Reviews</H3>
                   <View style={{flex: 1, flexDirection: 'row', flexWrap: "wrap"}}>
@@ -429,7 +449,7 @@ class DetailScreen extends Component {
                       console.log('ini item : ',item)
                       return ( 
                         <View style={styles.recentLocation}>
-                          <Text>{item.trim()}</Text>
+                          <Text>{item}</Text>
                         </View>
                       )
                     })}
@@ -441,11 +461,11 @@ class DetailScreen extends Component {
 
             {/* modal*/}
             <Modal
-          isVisible={this.state.modalVisible}
-          onBackdropPress={() => this.setState({ modalVisible: false })}
-          >
-          {this._renderModalContent()}
-          </Modal>
+              isVisible={this.state.modalVisible}
+              onBackdropPress={() => this.setState({ modalVisible: false })}
+            >
+            {this._renderModalContent()}
+            </Modal>
           
             {/* end modal */}
 
@@ -563,7 +583,10 @@ const styles = StyleSheet.create({
     width: width/3-20,
     height: 50
   },
-
+  tablContainer: { flex: 1, padding: 16, paddingTop: 30, backgroundColor: '#fff' },
+  wrapper: { flexDirection: 'row' },
+  row: {  height: 100  },
+  text: { textAlign: 'center' }
 });
 
 const mapStateToProps = (state) => ({

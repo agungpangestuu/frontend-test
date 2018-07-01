@@ -12,6 +12,7 @@ import SearchScreen from './components/SearchScreen'
 import DetailScreen from './components/DetailListScreen'
 import RecentScreen from './components/RecentScreen'
 import ProfileScreen from './components/ProfileScreen'
+import ReviewScreen from './components/ReviewScreen'
 // import CameraScreen from './components/OpenCamera'
 const Apps = StackNavigator({
   Home: {
@@ -58,6 +59,12 @@ const Apps = StackNavigator({
   },
   ProfileScreen : {
     screen: ProfileScreen,
+    navigationOptions: {
+      header: null
+    }
+  },
+  ReviewScreen: {
+    screen: ReviewScreen,
     navigationOptions: {
       header: null
     }
