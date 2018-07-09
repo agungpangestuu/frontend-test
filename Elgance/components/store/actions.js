@@ -260,23 +260,18 @@ export const postRecent = (userId, salonId) => {
 }
 
 
-export const postReview = (source) => {
+export const postReview = (comment) => {
   return (dispatch, getState) => {
-    let payload = {
-      star,
-      text,
-      user,
-      salon
-    }
-    // return new Promise((resolve, reject) => {
-      axios.post(`http://Hapi-aja.herokuapp.com/review`, payload, {headers: {'Authorization': `Bearer ${getState().login.token}`}})
+    return new Promise((resolve, reject) => {
+      axios.post(`http://Hapi-aja.herokuapp.com/review`, comment, {headers: {'Authorization': `Bearer ${getState().login.token}`}})
       .then( ({ data }) => {
         console.log('ini data post review',data)
+        resolve(data)
       })
       .catch(err => {
         console.log(err)
-        // reject(err)
+        reject(err)
       })
-    // })
+    })
   }
 }
