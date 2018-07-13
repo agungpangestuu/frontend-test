@@ -173,13 +173,13 @@ export const postBookmark = (userId, salonId) => {
              let resultFilter = result.bookmark.filter( item => item._id !== salonId )
              result.bookmark = resultFilter
              AsyncStorage.setItem('credential', JSON.stringify(result)).then(hasil => {
-              console.log(hasil)
+              console.log('ini hasil 1 : ',hasil)
             })
 
           } else {
             result.bookmark.push(userId)
             AsyncStorage.setItem('credential', JSON.stringify(result)).then(hasil => {
-              console.log(hasil)
+              console.log('ini hasil 2 : ',hasil)
             })
           }
         })

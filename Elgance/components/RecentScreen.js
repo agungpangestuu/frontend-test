@@ -138,7 +138,7 @@ const mapStateToProps = (state) => ({
 const mapDispatchToProps = (dispatch) => ({
   postLogin_state: obj => dispatch(login_user(obj)),
   setAllCategory: () => dispatch(getAllCategory()),
-  setDetail: (data) => { dispatch(DetailList(data)) }
+  setDetail: (data) => { dispatch(DetailList(data.salon)) }
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(RecentScreen)

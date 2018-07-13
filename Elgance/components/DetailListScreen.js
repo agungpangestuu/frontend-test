@@ -46,12 +46,12 @@ class DetailScreen extends Component {
 
     const { location, lat, long, service } = this.props.detailList
 
-    if(lat && long){
+    if(this.props.getDirect && lat && long){
 
       this.setState({lat: long, long: lat})
     }
     else{
-      this.setState({lat: this.props.getLocation.lat, long: this.props.getLocation.long})
+      this.setState({lat: this.props.location[0].location.coordinates[1], long: this.props.location[0].location.coordinates[0]})
     }
     let bookmark = this.props.getData.bookmark.filter(item => item.salon._id === params)
     let beenHere = this.props.getData.recent.filter(element => element.salon._id === params)
@@ -81,11 +81,12 @@ class DetailScreen extends Component {
     }
 
     if(this.props.detailList.review.length > 0 ) {
-      let rate = this.countStar() / 5
+      let rate = this.countStar() / this.props.detailList.review.length
+      rate = rate.toFixed(1)
       this.setState({rate})
     }
     else {
-      this.setState({rate: '0.0'})
+      this.setState({rate: 0})
     }
   }
 
@@ -184,7 +185,7 @@ class DetailScreen extends Component {
           'Mohon maaf',
           'kami tidak menyediakan nomor untuk salon ini ',
           [
-            {text: 'OK', onPress: () => BackHandler.exitApp() },
+            {text: 'OK',},
           ],
           { cancelable: false }
         )
@@ -343,7 +344,7 @@ class DetailScreen extends Component {
     const {showAlert} = this.state;
     
     return (!this.state.isLoading && this.state.distric != null ? (
-      !detailList.address ?
+      !this.props.getDirect ?
         (
           <Container>
             <Collapsible
@@ -379,7 +380,7 @@ class DetailScreen extends Component {
                   </View>
                   <View style={{ borderBottomWidth: 1.5, borderBottomColor: '#D28496', marginBottom: 20, marginTop: 20 }}/>
                   <H3>INFO</H3>
-                  <Text>{detailList.address}</Text>
+                  <Text>{detailList.location[0].address}</Text>
                   
                   <Text></Text>
                   <View style={styles.line}/>
@@ -622,7 +623,9 @@ const mapStateToProps = (state) => ({
   // episode: state.episodeReducer.episode
   detailList: state.detailList,
   getData: state.login,
+  getDirect: state.mainPage.directLocation,
   getLocation: state.location
+
 })
 
 const mapDispatchToProps = (dispatch) => ({
