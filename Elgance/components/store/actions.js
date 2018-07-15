@@ -275,3 +275,20 @@ export const postReview = (comment) => {
     })
   }
 }
+
+export const getDetail = (id, lat, long) => {
+  return (dispatch, getState) => {
+    return new Promise((resolve, reject) => {
+      axios.get(`http://Hapi-aja.herokuapp.com/salon/${id}?lat=${lat}&long=${long}`,{headers: {'Authorization': `Bearer ${getState().login.token}`}})
+      .then( ({ data }) => {
+        console.log('ini data get',data)
+        dispatch(DetailList(data))
+        resolve(data)
+      })
+      .catch(err => {
+        console.log(err)
+        reject(err)
+      })
+    })
+  }
+}

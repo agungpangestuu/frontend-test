@@ -4,7 +4,7 @@ import { Container, Header, Content, Card, CardItem, Thumbnail, Text, Button, Ic
 import { connect } from "react-redux"
 
 import CardBox from "./Card";
-import { DetailList } from '../store/actions'
+import { getDetail } from '../store/actions'
 var { height, width } = Dimensions.get("window");
 
 class CardImageExample extends Component {
@@ -12,10 +12,35 @@ class CardImageExample extends Component {
     super(props)
   }
 
-  _handlePress(data, id) {
-    this.props.setDetail(data)
-    const { navigate } = this.props.navigation
-    navigate({ routeName: "DetailScreen", key: 'DetailScreen1', params: id })
+  async getDetailList(data) {
+    await this.props.getDetail(data)
+  }
+
+  _handlePress(detail, id) {
+    let data = {
+      id: id,
+      lat: this.props.getLocation.lat,
+      long: this.props.getLocation.long
+    }
+    this.getDetailList(data).then(result => {
+      const { navigate } = this.props.navigation
+      navigate({ routeName: "DetailScreen", key: 'DetailScreen1', params: id })
+    }).catch(e => console.log(e))
+  }
+  renderIfLocationDetect() {
+    return (
+      <TouchableOpacity onPress={() => { this._handlePress(item, item._id) }}>
+        <Card style={{ height: 250, width: width / 3 + 15, flex: 0, flexGrow: 1 }}>
+          <CardItem cardBody style={{ backgroundColor: '#D28496' }}>
+            <Image source={{ uri: ( item.images && item.images.length > 0 ) ? item.images : 'https://www.gumtree.com/static/1/resources/assets/rwd/images/orphans/a37b37d99e7cef805f354d47.noimage_thumbnail.png' }} style={{ height: 100, flex: 1, flexGrow: 1, width: null }} resizeMode={'contain'} />
+          </CardItem>
+          <CardItem style={{ flex: 1, flexDirection: 'column' }}>
+            <Text style={{ textAlign: 'center', fontFamily: "niagara", marginBottom: 10 }}>{item.name}</Text>
+            <Text style={{ textAlign: 'center', fontFamily: "niagara" }}>{item.location[0].address}</Text>
+          </CardItem>
+        </Card>
+      </TouchableOpacity>
+    )
   }
   render() {
     let data = this.props.data
@@ -28,7 +53,6 @@ class CardImageExample extends Component {
             <View style={{ flexWrap: 'wrap', flex: 1, flexDirection: 'row' }}>
 
               {data.map(item => {
-                if(this.props.getDirect) {
                   return (
                     <TouchableOpacity onPress={() => { this._handlePress(item, item._id) }}>
                       <Card style={{ height: 250, width: width / 3 + 15, flex: 0, flexGrow: 1 }}>
@@ -42,22 +66,6 @@ class CardImageExample extends Component {
                       </Card>
                     </TouchableOpacity>
                   )
-                } else {
-                  return (
-                    <TouchableOpacity onPress={() => { this._handlePress(item, item._id) }}>
-                      <Card style={{ height: 250, width: width / 3 + 15, flex: 0, flexGrow: 1 }}>
-                        <CardItem cardBody style={{ backgroundColor: '#D28496' }}>
-                          <Image source={{ uri: ( item.images && item.images.length > 0 ) ? item.images : 'https://www.gumtree.com/static/1/resources/assets/rwd/images/orphans/a37b37d99e7cef805f354d47.noimage_thumbnail.png' }} style={{ height: 100, flex: 1, flexGrow: 1, width: null }} resizeMode={'contain'} />
-                        </CardItem>
-                        <CardItem style={{ flex: 1, flexDirection: 'column' }}>
-                          <Text style={{ textAlign: 'center', fontFamily: "niagara", marginBottom: 10 }}>{item.name}</Text>
-                          <Text style={{ textAlign: 'center', fontFamily: "niagara" }}>{item.location[0].address}</Text>
-                        </CardItem>
-                      </Card>
-                    </TouchableOpacity>
-                  )
-                }
-                  
               })}
             </View>
           </CardBox>
@@ -74,11 +82,12 @@ class CardImageExample extends Component {
 
 const mapStateToProps = (state) => ({
   getDirect: state.mainPage.directLocation,
+  getLocation: state.location
 })
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    setDetail: (data) => { dispatch(DetailList(data)) }
+    getDetail: (data) => dispatch(getDetail(data.id, data.lat, data.long))
   }
 };
 

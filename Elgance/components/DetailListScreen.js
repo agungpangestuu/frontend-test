@@ -12,7 +12,7 @@ import Modal from 'react-native-modal'
 import { Table, TableWrapper, Row, Rows, Col, Cols, Cell } from 'react-native-table-component'
 
 // import {fetch_one_episode} from '../stores/episodeAction'
-import {postBookmark, postRecent, postReview} from './store/actions'
+import {postBookmark, postRecent, postReview, getDetail} from './store/actions'
 
 var { height, width } = Dimensions.get("window");
 
@@ -39,19 +39,25 @@ class DetailScreen extends Component {
     }
     this.handleBackAndroid = this._handleBackAndroid.bind(this)
   }
+
+  async getDetailList() {
+    this.props.getDetail()
+  }
+
   componentWillMount() {
     let {params} = this.props.navigation.state
     // this.props.fetchOne(params.id)
-    console.log('ini detail props list ',this.props)
-
     const { location, lat, long, service } = this.props.detailList
 
     if(this.props.getDirect && lat && long){
 
       this.setState({lat: long, long: lat})
     }
-    else{
-      this.setState({lat: this.props.location[0].location.coordinates[1], long: this.props.location[0].location.coordinates[0]})
+    else if(location.length > 0){
+      this.setState({lat: location[0].location.coordinates[1], long: location[0].location.coordinates[0]})
+    }
+    else {
+      this.setState({lat: long, long: lat})
     }
     let bookmark = this.props.getData.bookmark.filter(item => item.salon._id === params)
     let beenHere = this.props.getData.recent.filter(element => element.salon._id === params)
@@ -68,7 +74,6 @@ class DetailScreen extends Component {
       let tempArr = []
       for (let i = 0; i <= arrService.length; i++) {
         if(arrService.length === i) {
-          console.log('ini arr service : ',arr)
           this.setState({service: arr})
         }
         if (tempArr.length === 3) {
@@ -82,7 +87,9 @@ class DetailScreen extends Component {
 
     if(this.props.detailList.review.length > 0 ) {
       let rate = this.countStar() / this.props.detailList.review.length
-      rate = rate.toFixed(1)
+      if (rate % 1 !== 0) {
+        rate = rate.toFixed(1)
+      }
       this.setState({rate})
     }
     else {
@@ -94,36 +101,40 @@ class DetailScreen extends Component {
     BackHandler.addEventListener('hardwareBackPress', this.handleBackAndroid);
     
     // if (location && location.hasOwnProperty('coordinates')) {
-      axios.get(`https://maps.googleapis.com/maps/api/geocode/json?latlng=${this.state.lat},${this.state.long}&key=AIzaSyAjWOHPrXscmVtlGBYIsi6ZrvF8ZYydteI`)
-      .then(({data}) => {
-        console.log('ini data : ',data)
-        data.results.forEach(item => {
-          console.log(item.types)
-          if(item.types.includes("administrative_area_level_2") || item.types.includes("administrative_area_level_3")){
-            if(this.state.distric){
-              return
+      if(this.state.long && this.state.lat) {
+        axios.get(`https://maps.googleapis.com/maps/api/geocode/json?latlng=${this.state.lat},${this.state.long}&key=AIzaSyAjWOHPrXscmVtlGBYIsi6ZrvF8ZYydteI`)
+        .then(({data}) => {
+          let address, noaddress
+          data.results.forEach(item => {
+            if(item.types.includes("administrative_area_level_2") || item.types.includes("administrative_area_level_3")){
+                return address = item.formatted_address
             }
             else {
-              this.setState({
-                distric: item.formatted_address,
-                isLoading: false
-              })
+              return noaddress = item.address_components[0].long_name
             }
-            
-          }
-          else {
-            this.setState({
-              isLoading: false
-            })
-          }
+          })
+          address ? this.setState({
+            distric: address,
+            isLoading: false
+          }) : this.setState({
+            distric: noaddress,
+            isLoading: false
+          })
         })
-      })
-      .catch(err => {
+        .catch(err => {
+          this.setState({
+            isLoading: false
+          })
+        })
+      } else {
+
+
+
         this.setState({
+          distric: this.props.detailList.address.split(' ').slice(0,3).join(' '),
           isLoading: false
         })
-        console.log(err)
-      })
+      }
     // }
     // else {
     //   this.setState({
@@ -137,10 +148,6 @@ class DetailScreen extends Component {
     let count = 0
     this.props.detailList.review.forEach(item => count+=item.star)
     return count
-  }
-
-  componentDidUpdate(){
-    console.log('update state : ',this.state)
   }
 
   _handleBackAndroid() {
@@ -380,7 +387,7 @@ class DetailScreen extends Component {
                   </View>
                   <View style={{ borderBottomWidth: 1.5, borderBottomColor: '#D28496', marginBottom: 20, marginTop: 20 }}/>
                   <H3>INFO</H3>
-                  <Text>{detailList.location[0].address}</Text>
+                  <Text>{(detailList.location.length > 0) ? detailList.location[0].address : detailList.address}</Text>
                   
                   <Text></Text>
                   <View style={styles.line}/>
@@ -482,7 +489,6 @@ class DetailScreen extends Component {
         <H3>Reviews</H3>
         <View>
           {this.props.detailList.review.reverse().map(item => {
-            console.log('ini item : ',item)
             return ( 
                 <List style={{backgroundColor: 'white'}}>
                   <ListItem thumbnail>
@@ -633,7 +639,8 @@ const mapDispatchToProps = (dispatch) => ({
   bookmarkPost: (userId, salonId) => { dispatch(postBookmark(userId, salonId))},
   recentPost: (userId, salonId) => { dispatch(postRecent(userId, salonId))},
   postLogin_state: obj => dispatch(login_user(obj)),
-  postReview: review => dispatch(postReview(review))
+  postReview: review => dispatch(postReview(review)),
+  getDetail: data => dispatch(getDetail(data.id, data.lat, data.long))
 })
 
 

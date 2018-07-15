@@ -144,8 +144,8 @@ export class componentName extends Component {
 
   _alertForPhotosPermission() {
     Alert.alert(
-      'Can we access your photos?',
-      'We need access so you can set your profile pic',
+      'Can we access your GPS?',
+      'We need access so you can set your location',
       [
         {
           text: 'No way',

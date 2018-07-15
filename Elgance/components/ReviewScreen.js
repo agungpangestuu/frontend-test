@@ -3,7 +3,7 @@ import { Dimensions, BackHandler, View, Textarea, TextInput } from 'react-native
 import { Container, Header, Thumbnail, Left, Body, Icon, Text, Right, Button, List, ListItem, Toast } from "native-base";
 import { AirbnbRating } from "react-native-ratings";
 import {connect} from 'react-redux'
-import { postReview } from './store/actions'
+import { postReview, getDetail } from './store/actions'
 // import { Button } from 'react-native-elements'
 
 var { height, width } = Dimensions.get("window");
@@ -14,7 +14,7 @@ class Review extends Component {
         super(props)
         this.state={
             review: '',
-            star: 1
+            star: 5
         }
 
         this.handleBackAndroid = this._handleBackAndroid.bind(this)
@@ -22,17 +22,25 @@ class Review extends Component {
     handleChangeTextArea(e) {
         this.setState({review: e})
     }
-    handleSubmit() {
-
-    }
 
     componentDidMount() {
         BackHandler.addEventListener('hardwareBackPress', this.handleBackAndroid);
 
     }
 
+    async getDetailList() {
+        let data = {
+            id: this.props.detailList._id,
+            lat: this.props.getLocation.lat,
+            long: this.props.getLocation.long
+        }
+        return await this.props.getDetail(data)
+    }
+
     _handleBackAndroid() {
-        this.props.navigation.goBack();
+        this.getDetailList().then(result  => {
+            this.props.navigation.goBack();
+        }).catch(e => console.log(e)) 
         return true;
     } 
 
@@ -109,7 +117,9 @@ class Review extends Component {
             comment: this.state.review,
             user_id: this.props.user.id
         }
+        console.log(payload)
         this.props.postReview(payload).then(result => {
+            console.log(result)
             this.handleBackAndroid()
         }).catch(err => {
             Toast.show({
@@ -122,11 +132,13 @@ class Review extends Component {
 
 const mapStateToProps = (state) => ({
     detailList: state.detailList,
-    user: state.login
+    user: state.login,
+    getLocation: state.location
 })
 
 const mapDispatchToProps = (dispatch) => ({
-    postReview : (comment) => dispatch(postReview(comment))
+    postReview : (comment) => dispatch(postReview(comment)),
+    getDetail : (data) => dispatch(getDetail(data.id, data.lat, data.long))
 })
 
 export default connect(mapStateToProps, mapDispatchToProps)(Review);
