@@ -52,7 +52,6 @@ class Login extends Component {
             password: this.state.password
         }
         Keyboard.dismiss()
-        console.log(LoginEvent)
         this.props.postLogin_state(LoginEvent).then(result => {
               this.props.setAllCategory().then(resultData => { 
                 const resetAction = NavigationActions.reset({
@@ -64,11 +63,9 @@ class Login extends Component {
                   this.props.navigation.dispatch(resetAction);
               }).catch(err => {
                 this.setState({error: true, isLoading: false})
-                console.log(err)
               })
            
         }).catch(err => {
-            console.log(err)
             this.setState({error: true, isLoading: false},
             Keyboard.dismiss())
             Alert.alert('UserName or Password Wrong ...')
@@ -90,7 +87,6 @@ class Login extends Component {
     }
 
     handleUsernameChange(e) {
-        console.log(e.target)
         this.setState({ username: e.target.value })
     }
     handlePasswordChange(e) {   

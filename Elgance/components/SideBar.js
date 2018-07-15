@@ -24,7 +24,6 @@ class SideBar extends Component {
     }).catch(err => console.log(err))
   }
   render() {
-    console.log(this.props);
     return (
       <Content style={{ backgroundColor: "white" }}>
         <View style={{marginLeft: 10, marginTop: 20, marginBottom: 20, flex:1, flexDirection:'row'}}>

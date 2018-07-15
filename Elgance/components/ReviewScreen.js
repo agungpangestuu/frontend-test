@@ -117,9 +117,7 @@ class Review extends Component {
             comment: this.state.review,
             user_id: this.props.user.id
         }
-        console.log(payload)
         this.props.postReview(payload).then(result => {
-            console.log(result)
             this.handleBackAndroid()
         }).catch(err => {
             Toast.show({

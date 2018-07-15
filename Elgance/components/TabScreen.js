@@ -20,7 +20,6 @@ class TabScreen extends Component {
     }
   }
   componentDidMount(){
-    console.log('ini get search',this.props.getSearch)
     if(this.props.getSearch){
       var count  = 0
       this.props.getSearch.forEach((element, index) => {
@@ -43,9 +42,6 @@ class TabScreen extends Component {
         this.setState({isLoading: false})
       }
     }
-  }
-  componentDidUpdate(){
-   console.log(this.state)
   }
   
   render() {

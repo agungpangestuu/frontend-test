@@ -128,7 +128,7 @@ export function data(position) {
           .catch(err => console.log(err))
         // if (count === locationInBanten.length) return locationInBanten
     })
-    console.log(locationInBanten)
+
     return locationInBanten
 }
  

@@ -40,7 +40,6 @@ export class componentName extends Component {
   
   _getCredentialLogin() {
     AsyncStorage.getItem('credential').then(result => {
-      console.log(result)
       if(result){
         const { navigate } = this.props.navigation
         const credential = JSON.parse(result)
@@ -49,7 +48,6 @@ export class componentName extends Component {
           password: credential.password
         }
         this.props.postLogin_state(obj).then(resultLogin => {
-          console.log(resultLogin)
           this.props.setAllCategory().then(resultAll => {
             this.setState({alreadyWillMount: true, alreadyLogin : true})
           })
@@ -60,7 +58,6 @@ export class componentName extends Component {
         }).catch(err => console.log(err))
         
       } else {
-        console.log('masuk else')
         this.setState({isLoading: false})
       }
     }).catch(err => {
@@ -70,7 +67,6 @@ export class componentName extends Component {
   _getLocation() {
     Permissions.check('location').then(response => {
       // Response is one of: 'authorized', 'denied', 'restricted', or 'undetermined'
-      console.log(response)
       this.setState({ locationPermission: response })
     })
     navigator.geolocation.getCurrentPosition(
@@ -84,7 +80,6 @@ export class componentName extends Component {
       },
       (error) => {
         this.setState({ error: error.message, refreshing: false })
-        console.log(error)
       },
       { enableHighAccuracy: false, timeout: 5000}
     );
@@ -92,17 +87,13 @@ export class componentName extends Component {
   _changeScreen() {
     if(this.state.alreadyDidMount && this.state.alreadyWillMount) {
 
-      // this.props.getNearest(this.props.getLocation.lat, this.props.getLocation.long).then(result => {
-      //  console.log(result)
       const resetAction = NavigationActions.reset({
         index: 0,
         actions: [
           NavigationActions.navigate({ routeName: 'MainPage' }),
         ],
       });
-      this.props.navigation.dispatch(resetAction);
-      // }).catch(err => console.log(err))
-    
+      this.props.navigation.dispatch(resetAction);    
     }
   }
   _request = async () => {
@@ -116,11 +107,9 @@ export class componentName extends Component {
         }
       )
       if (granted) {
-        console.log("You can use the camera")
         this._getLocation()
         return granted
       } else {
-        console.log("Camera permission denied")
         this.setState({refreshing: false})
         return granted
       }
@@ -131,7 +120,6 @@ export class componentName extends Component {
 
   _requestPermission = async () => {
     let request = await this._request()
-    console.log(request)
     // Permissions.request('location').then(response => {
     //   console.log(response)
     //   Permissions.openSettings()

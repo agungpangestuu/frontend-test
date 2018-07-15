@@ -44,7 +44,6 @@ class CardImageExample extends Component {
   }
   render() {
     let data = this.props.data
-    console.log('ini props tab', this.props.navigation)
     {
       if (data) {
         return (

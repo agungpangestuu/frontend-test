@@ -78,14 +78,12 @@ export const login_user = obj => {
           }
           AsyncStorage.setItem("credential", JSON.stringify(objLogin))
             .then(result => {
-               console.log('ini data login: ', result)
               dispatch(LoginAction(objLogin));
               resolve(objLogin);
             })
             .catch(err => console.log(err));
         })
         .catch(err => {
-          console.log(err);
           reject(false);
         });
     });
@@ -93,7 +91,6 @@ export const login_user = obj => {
 };
 
 export const signup_user = obj => {
-  console.log(obj);
   return (dispatch, getState) => {
     return new Promise((resolve, reject) => {
       axios
@@ -103,7 +100,6 @@ export const signup_user = obj => {
           resolve(data);
         })
         .catch(err => {
-          console.log(err);
           reject(err);
         });
     });
@@ -130,12 +126,10 @@ export const getAllCategory = () => {
     return new Promise((resolve, reject) => {
       axios.get(`http://Hapi-aja.herokuapp.com/saloncategory`, {headers: {'Authorization': `Bearer ${getState().login.token}`}})
       .then( ({ data }) => {
-        console.log('ini data all category',data)
         dispatch(Search(data))
         resolve(data)
       })
       .catch(err => {
-        console.log(err)
         reject(err)
       })
     })
@@ -151,7 +145,6 @@ export const getNearest = (lat, long) => {
         resolve(data)
       })
       .catch(err => {
-        console.log(err)
         reject(err)
       })
     })
@@ -172,15 +165,10 @@ export const postBookmark = (userId, salonId) => {
           if(tempData.length > 0) {
              let resultFilter = result.bookmark.filter( item => item._id !== salonId )
              result.bookmark = resultFilter
-             AsyncStorage.setItem('credential', JSON.stringify(result)).then(hasil => {
-              console.log('ini hasil 1 : ',hasil)
-            })
-
+             AsyncStorage.setItem('credential', JSON.stringify(result)).then(hasil)
           } else {
             result.bookmark.push(userId)
-            AsyncStorage.setItem('credential', JSON.stringify(result)).then(hasil => {
-              console.log('ini hasil 2 : ',hasil)
-            })
+            AsyncStorage.setItem('credential', JSON.stringify(result)).then(hasil)
           }
         })
         // resolve(data)
@@ -198,7 +186,6 @@ export const getLocationRecent = () => {
     AsyncStorage.getItem('recentLocation')
     .then(result => {
         result = JSON.parse(result) 
-        console.log('ini action result : ',result)
         dispatch(recentLocations(result))
     })
     .catch(e => console.log(e))
@@ -208,23 +195,17 @@ export const getLocationRecent = () => {
 export const postLocationRecent = (recentLocation) => {
   return (dispatch, getState) => {
     let result = (!getState().recentLocations) ? [] : [...getState().recentLocations].filter(item => {
-      console.log('ini item : ',item)
        if (item.text !== recentLocation.text && item.lat !== recentLocation.lat && item.long !== recentLocation.long) {
          return item
        }
     })
-    console.log('ini map result : ',result)
     if (result.length === 5) {
-      console.log('ini action sebelum pop :',getState().recentLocations)
       result.pop()
-      console.log('ini action sesudah pop : ',result)
       result.unshift(recentLocation)
-      console.log('ini action setelah unshift : ', result)
       AsyncStorage.setItem("recentLocation", JSON.stringify(result)).then(succes => dispatch(recentLocations(result))).catch(err => console.log(err))
       
     }
     else if (result.length < 5){
-      console.log('ini getstate : ', getState())
       let recent = [recentLocation, ...result]
 
       AsyncStorage.setItem("recentLocation", JSON.stringify(recent)).then(succes => dispatch(recentLocations(result))).catch(err => console.log(err))
@@ -241,7 +222,6 @@ export const postRecent = (userId, salonId) => {
     // return new Promise((resolve, reject) => {
       axios.post(`http://Hapi-aja.herokuapp.com/recent`, { user_id: userId, salon_id: salonId}, {headers: {'Authorization': `Bearer ${getState().login.token}`}})
       .then( ({ data }) => {
-        console.log('ini data post bookmark',data)
         // AsyncStorage.getItem('credential').then(result => {
         //   result = JSON.parse(result)
         //   result.bookmark.push(userId)
@@ -265,11 +245,9 @@ export const postReview = (comment) => {
     return new Promise((resolve, reject) => {
       axios.post(`http://Hapi-aja.herokuapp.com/review`, comment, {headers: {'Authorization': `Bearer ${getState().login.token}`}})
       .then( ({ data }) => {
-        console.log('ini data post review',data)
         resolve(data)
       })
       .catch(err => {
-        console.log(err)
         reject(err)
       })
     })
@@ -281,12 +259,10 @@ export const getDetail = (id, lat, long) => {
     return new Promise((resolve, reject) => {
       axios.get(`http://Hapi-aja.herokuapp.com/salon/${id}?lat=${lat}&long=${long}`,{headers: {'Authorization': `Bearer ${getState().login.token}`}})
       .then( ({ data }) => {
-        console.log('ini data get',data)
         dispatch(DetailList(data))
         resolve(data)
       })
       .catch(err => {
-        console.log(err)
         reject(err)
       })
     })
